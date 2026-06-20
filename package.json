@@ -1,0 +1,12 @@
+{
+  "name": "cpns-book-app",
+  "version": "1.0.0",
+  "description": "Buku Kesalahan CPNS",
+  "private": true,
+  "scripts": {
+    "sync": "cap sync android",
+    "open": "cap open android"
+  },
+  "author": "Renno",
+  "license": "MIT"
+}
