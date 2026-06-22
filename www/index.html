@@ -322,7 +322,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="btn btn-s" onclick="openSettings()"><i class="ti ti-settings"></i> Kategori</button>
         <button class="btn btn-s" onclick="openSyncModal()"><i class="ti ti-cloud"></i> Cloud Sync</button>
         <button class="btn btn-s" onclick="openHeadingModal()"><i class="ti ti-heading"></i> Judul</button>
-        <button class="btn btn-s" onclick="window.print()"><i class="ti ti-printer"></i> Cetak</button>
+        <button class="btn btn-s" onclick="doPrint()"><i class="ti ti-printer"></i> Cetak / PDF</button>
         <button class="btn btn-p" onclick="togglePanel()"><i class="ti ti-plus"></i> Tambah Soal</button>
       </div>
     </div>
@@ -1501,6 +1501,14 @@ function bindPasteArea(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{loadData();initCloud();});
+
+function doPrint(){
+  if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()){
+    alert('Cetak/PDF cuma jalan lewat browser (Chrome), tidak bisa di app ini.');
+    return;
+  }
+  window.print();
+}
 </script>
 </body>
 </html>
