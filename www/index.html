@@ -1014,13 +1014,39 @@ function applyTheme(theme){
   }
   renderLainnya();
 }
-function exportData(){
+async function exportData(){
+  const payload={app:'Exambre',version:1,exportedAt:new Date().toISOString(),qs,nid,cats,heading,gami};
+  const json=JSON.stringify(payload,null,2);
+  const filename=`exambre-backup-${new Date().toISOString().slice(0,10)}.json`;
+  const isNative=window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform();
+
+  if(isNative){
+    try{
+      const Filesystem=window.Capacitor.Plugins&&window.Capacitor.Plugins.Filesystem;
+      const Share=window.Capacitor.Plugins&&window.Capacitor.Plugins.Share;
+      if(!Filesystem){
+        showToast('Plugin penyimpanan belum terpasang di app ini (lihat instruksi setup)','warn',5000);
+        return;
+      }
+      const result=await Filesystem.writeFile({path:filename,data:json,directory:'CACHE',encoding:'utf8'});
+      if(Share){
+        await Share.share({title:'Backup Exambre',text:'Backup data Exambre',url:result.uri,dialogTitle:'Simpan atau bagikan backup'});
+        showToast('Pilih lokasi simpan di menu yang muncul','ok');
+      }else{
+        showToast('File backup dibuat, tapi plugin Share belum ada untuk menyimpannya','warn',5000);
+      }
+    }catch(e){
+      showToast('Gagal export: '+(e&&e.message?e.message:'error tidak dikenal'),'warn',5000);
+      console.error('exportData error:',e);
+    }
+    return;
+  }
+
   try{
-    const payload={app:'Exambre',version:1,exportedAt:new Date().toISOString(),qs,nid,cats,heading,gami};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const blob=new Blob([json],{type:'application/json'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url;a.download=`exambre-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.href=url;a.download=filename;
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url),1000);
     showToast('Data berhasil diexport','ok');
