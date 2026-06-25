@@ -44,8 +44,11 @@ jobs:
         run: npx cap add android
 
       - name: Apply custom app icon
-        run: cp -r android-icon-assets/mipmap-* android/app/src/main/res/
-
+        run: |
+          cp -r android-icon-assets/mipmap-* android/app/src/main/res/
+          mkdir -p android/app/src/main/res/values
+          cp android-icon-assets/values/ic_launcher_background.xml android/app/src/main/res/values/
+          
       - name: Sync Capacitor
         run: npx cap sync android
 
