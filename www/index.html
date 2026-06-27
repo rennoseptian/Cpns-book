@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#4F62E0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,6 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="./assets/icon/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon/icon-192.png">
 <link rel="apple-touch-icon" href="./assets/icon/icon-192.png">
+<link rel="manifest" href="./manifest.json">
 <title>Exambre</title>
 <script>(function(){try{var t=localStorage.getItem('exambre-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="stylesheet" href="./assets/icons/tabler-icons.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css'">
@@ -45,8 +46,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--sp-4);gap:var(--sp-2)}
 .header h1{font-size:var(--fs-lg);font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:-.2px;line-height:1.3}
 .header p{font-size:var(--fs-xs);color:var(--text2);margin-top:4px;line-height:1.5}
-.savi{font-size:var(--fs-xs);color:var(--success-ink);display:inline-flex;align-items:center;gap:4px;opacity:0;transform:translateY(-2px) scale(.96);transition:opacity var(--dur-2) var(--ease),transform var(--dur-2) var(--ease);padding-top:6px}
-.savi.on{opacity:1;transform:translateY(0) scale(1)}
 .gami-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .set-panel{margin-bottom:14px}
 .set-panel h4{font-size:13px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px}
@@ -66,11 +65,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .bnav-item i{font-size:20px}
 .bnav-item.on{color:var(--accent)}
 .bnav-item:active{transform:scale(.94)}
-.bnav-badge{position:absolute;top:2px;right:22%;background:var(--accent);color:#fff;font-size:9px;font-weight:700;border-radius:50%;min-width:15px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 3px}
-.scroll-fab-wrap{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:400;display:flex;flex-direction:column;gap:8px}
-.scroll-fab{width:42px;height:42px;border-radius:50%;background:var(--bg);border:1px solid var(--border2);box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:18px;transition:opacity var(--dur-2) var(--ease),transform var(--dur-1) var(--ease);opacity:0;pointer-events:none;transform:translateY(6px)}
-.scroll-fab.show{opacity:1;pointer-events:all;transform:translateY(0)}
-.scroll-fab:active{transform:scale(.92)}
+.bnav-badge{position:absolute;top:2px;right:22%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 .sec{display:none}.sec.on{display:block}
 @keyframes secIn{0%{opacity:0;transform:translateY(3px)}100%{opacity:1;transform:translateY(0)}}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);margin-bottom:var(--sp-3)}
@@ -79,7 +74,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .prog{height:6px;background:var(--bg2);border-radius:3px;margin-bottom:18px;overflow:hidden}
 .progf{height:100%;background:var(--success);border-radius:3px;transition:width var(--dur-2) var(--ease)}
 .cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.ctab{padding:5px 14px;border:1px solid var(--border2);border-radius:var(--radius-pill);font-size:12px;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;font-family:inherit}
+.cats-wrap{position:relative}
+.cats-wrap::after{content:'';position:absolute;top:0;right:0;width:40px;height:100%;background:linear-gradient(to right, transparent, var(--bg3));pointer-events:none;border-radius:0 var(--radius-pill) var(--radius-pill) 0;transition:opacity .2s}
+.cats-wrap.at-end::after{opacity:0}
+.cats-wrap.no-overflow::after{display:none}
+.ctab{padding:10px 14px;min-height:44px;display:inline-flex;align-items:center;border:1px solid var(--border2);border-radius:var(--radius-pill);font-size:12px;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;font-family:inherit}
 .ctab.on{background:var(--text);color:var(--bg);border-color:var(--text)}
 .ctab:hover:not(.on){background:var(--bg2)}
 .btn{padding:7px 15px;border-radius:var(--radius);font-size:var(--fs-sm);font-weight:500;cursor:pointer;border:1px solid;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease),opacity var(--dur-1) var(--ease),transform var(--dur-1) var(--ease)}
@@ -121,7 +120,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .opt-ce:focus{border-color:var(--accent)}
 .opt-ce:empty::before{content:attr(data-ph);color:var(--text3);pointer-events:none}
 .opt-ce img{max-height:100px;max-width:100%;border-radius:4px;border:0.5px solid var(--border);display:block;margin:4px 0;cursor:pointer}
-.opt-ce-hint{font-size:10px;color:var(--text3);margin-top:2px}
+.opt-ce-hint{font-size:12px;color:var(--text3);margin-top:2px}
 .opt-html-content{flex:1;line-height:1.5}
 .opt-html-content img{max-height:80px;max-width:100%;border-radius:4px;border:0.5px solid var(--border);display:block;margin-top:4px;cursor:pointer}
 .img-input-area{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 12px;margin-top:4px}
@@ -135,18 +134,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .img-dropzone-sm:hover,.img-dropzone-sm.drag{border-color:var(--accent);background:var(--bg3)}
 .img-dropzone-sm input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .img-dropzone-sm p{font-size:11px;color:var(--text2);pointer-events:none}
-.img-scale-wrap{margin-top:6px;margin-bottom:2px}
-.img-scale-wrap img{display:block;border-radius:var(--radius);border:0.5px solid var(--border);object-fit:contain;cursor:pointer;max-height:220px;transition:opacity .15s}
-.img-scale-wrap img:hover{opacity:.85}
-.img-scale-row{display:flex;align-items:center;gap:8px;margin-top:4px;background:var(--bg2);border-radius:6px;padding:4px 10px}
-.img-scale-row label{font-size:11px;color:var(--text2);white-space:nowrap}
-.img-scale-row input[type=range]{flex:1;accent-color:var(--accent);height:3px}
-.img-scale-row .pct{font-size:11px;color:var(--text2);min-width:34px;text-align:right}
-.img-scale-row .rm-img-btn{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;display:flex;align-items:center;padding:1px 3px}
-.img-scale-row .rm-img-btn:hover{color:var(--red800)}
+.img-stored-item{margin-top:6px;margin-bottom:2px;position:relative;display:inline-block;max-width:100%}
+.img-stored-item img{display:block;max-height:200px;max-width:100%;object-fit:contain;border-radius:var(--radius);border:0.5px solid var(--border);cursor:pointer;transition:opacity .15s}
+.img-stored-item img:hover{opacity:.85}
+.img-stored-item .rm-img-btn{position:absolute;top:6px;right:6px;background:rgba(15,15,20,.6);border:none;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff}
+.img-stored-item .rm-img-btn:hover{background:var(--danger)}
 .stored-imgs{display:flex;flex-direction:column;gap:6px;margin-top:6px}
 .rte-toolbar{display:flex;gap:4px;flex-wrap:wrap;padding:6px 8px;background:var(--bg2);border:0.5px solid var(--border2);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0}
-.rte-btn{background:transparent;border:0.5px solid transparent;border-radius:4px;width:28px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text2);font-family:serif}
+.rte-btn{background:transparent;border:0.5px solid transparent;border-radius:4px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text2);font-family:serif}
 .rte-btn:hover{background:var(--bg3);border-color:var(--border);color:var(--text)}
 .rte-sep{width:0.5px;background:var(--border2);margin:2px 3px}
 .rte-area{border:0.5px solid var(--border2);border-radius:0 0 var(--radius) var(--radius);padding:10px 12px;min-height:90px;outline:none;font-size:13px;line-height:1.65;background:var(--bg);color:var(--text)}
@@ -167,7 +162,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .bM{background:var(--green50);color:var(--success-ink);font-size:11px;padding:3px 9px;border-radius:var(--radius-pill);font-weight:600}
 .badge-bab{background:var(--bg2);color:var(--text2);font-size:11px;padding:3px 9px;border-radius:var(--radius-pill);font-weight:500;border:1px solid var(--border)}
 .qacts{display:flex;gap:5px;align-items:center;flex-shrink:0}
-.ibtn{background:transparent;border:1px solid var(--border);border-radius:var(--radius);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s}
+.ibtn{background:transparent;border:1px solid var(--border);border-radius:var(--radius);width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s}
 .ibtn:hover{background:var(--bg2);border-color:var(--border2)}
 .ibtn.del:hover{background:var(--red50);border-color:var(--danger);color:var(--danger-ink)}
 .ibtn.ok:hover{background:var(--green50);border-color:var(--success);color:var(--success-ink)}
@@ -178,9 +173,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .opts-list{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .opt-item{font-size:13px;padding:7px 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);line-height:1.4;display:flex;align-items:flex-start;gap:8px}
 .opt-html-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-.opt-img-scale-wrap{width:100%}
-.opt-img-scale-wrap img{max-height:120px;max-width:100%;width:auto;object-fit:contain;display:block;cursor:pointer;border-radius:4px;border:0.5px solid var(--border)}
-.opt-img-scale-wrap .img-scale-row{padding:3px 8px!important}
 .opt-item .ltr{font-weight:600;flex-shrink:0;min-width:16px;color:var(--text2)}
 .opt-item.ow{background:var(--red50);border-color:var(--danger);color:var(--danger-ink)}
 .opt-item.oc{background:var(--green50);border-color:var(--success);color:var(--success-ink)}
@@ -216,7 +208,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 @keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
 .exambre-splash{position:fixed;inset:0;background:linear-gradient(160deg,#2f3eb8,#4F62E0 55%,#6f7ff0);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease,visibility .5s;cursor:pointer}
 .exambre-splash.hide{opacity:0;visibility:hidden;pointer-events:none}
-#splash-canvas{width:200px;height:200px;touch-action:none}
+.splash-logo-wrap{width:100px;height:100px;background:rgba(255,255,255,0.15);border-radius:28px;display:flex;align-items:center;justify-content:center;animation:splashPulse 2s ease-in-out infinite}
+.splash-icon{font-size:52px;color:#fff}
+@keyframes splashPulse{0%,100%{transform:scale(1);opacity:0.9}50%{transform:scale(1.06);opacity:1}}
 .splash-wordmark{color:#fff;font-size:21px;font-weight:800;letter-spacing:.3px;margin-top:14px;opacity:.95}
 .splash-skip{color:rgba(255,255,255,.65);font-size:11.5px;margin-top:8px}
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center}
@@ -234,7 +228,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .note-card-preview{font-size:12.5px;color:var(--text2);line-height:1.5;max-height:3.2em;overflow:hidden}
 .note-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
 .note-cat-badge{font-size:11px;padding:2px 8px;border-radius:var(--radius-pill);font-weight:600;border:1px solid}
-.note-date{font-size:10.5px;color:var(--text3)}
+.note-date{font-size:12px;color:var(--text3)}
 .note-editor-overlay{display:none;position:fixed;inset:0;background:var(--bg3);z-index:9000;flex-direction:column}
 .note-editor-overlay.on{display:flex}
 .note-editor-header{background:var(--bg);border-bottom:1px solid var(--border2);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -264,7 +258,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .note-cat-color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
 .modal h3{font-size:16px;font-weight:700;margin-bottom:4px}
 .modal .sub{font-size:12px;color:var(--text2);margin-bottom:18px}
-.modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--text2)}
+.modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--text2);width:44px;height:44px;display:flex;align-items:center;justify-content:center}
 .bab-manager{background:var(--bg2);border-radius:var(--radius);padding:12px;margin-top:8px}
 .bab-list{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
 .bab-item{display:flex;align-items:center;gap:6px}
@@ -283,6 +277,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .empty{text-align:center;padding:48px 1rem;color:var(--text2)}
 .empty i{font-size:44px;display:block;margin-bottom:14px;opacity:.3;color:var(--text3)}
 .empty p{font-size:13px;line-height:1.6;max-width:320px;margin:0 auto}
+.onboard-card{text-align:center;padding:40px 24px;background:var(--bg);border:1.5px dashed var(--accent);border-radius:var(--radius-lg);margin-bottom:var(--sp-4)}
 /* Toast */
 .toast-wrap{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:9990;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
 .toast{background:var(--text);color:var(--bg);padding:9px 18px;border-radius:var(--radius-pill);font-size:13px;opacity:0;transform:translateY(6px);transition:all .2s;white-space:nowrap;pointer-events:all;box-shadow:0 4px 16px rgba(0,0,0,.2)}
@@ -312,7 +307,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   .bnav-item{font-size:9.5px}
   .bnav-item i{font-size:19px}
   .stats{grid-template-columns:repeat(2,1fr);gap:8px}
-  .scard{padding:10px 8px}.snum{font-size:19px}.slbl{font-size:10px}
+  .scard{padding:10px 8px}.snum{font-size:19px}.slbl{font-size:12px}
   .cats{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;margin-bottom:12px}
   .ctab{flex-shrink:0}
   .toolbar{flex-direction:column;align-items:stretch;gap:8px}
@@ -329,7 +324,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   .filter-row{flex-direction:column;align-items:stretch;gap:6px}
   .filter-row select{width:100%}
   .qcard{padding:13px 14px}
-  .ibtn{width:34px;height:34px;font-size:15px}
+  .ibtn{font-size:15px}
   .modal-overlay{align-items:flex-start;padding:12px 0;overflow-y:auto}
   .modal{padding:16px;width:calc(100% - 20px);max-height:none;margin:0 auto;border-radius:14px}
   .toast-wrap{width:calc(100% - 32px);bottom:84px}
@@ -340,7 +335,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   .tbr .btn{font-size:11px;padding:8px 4px}
   .app{padding:12px 10px calc(82px + env(safe-area-inset-bottom,0px))}
   .header h1{font-size:16px}
-  .scard{padding:9px 6px}.snum{font-size:17px}.slbl{font-size:9.5px}
+  .scard{padding:9px 6px}.snum{font-size:18px}.slbl{font-size:11px}
   .gami-row{gap:10px}
   .gpill{font-size:11px}
   .search-wrap{padding:5px 10px}
@@ -351,13 +346,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 </style>
 </head>
 <body>
-<div class="exambre-splash" id="exambre-splash">
-  <canvas id="splash-canvas"></canvas>
+<div class="exambre-splash" id="exambre-splash" onclick="dismissSplash()">
+  <div class="splash-logo-wrap">
+    <i class="ti ti-book-2 splash-icon"></i>
+  </div>
   <div class="splash-wordmark">Exambre</div>
   <div class="splash-skip">Ketuk untuk lanjut</div>
 </div>
 <div class="lightbox" id="lightbox" onclick="closeLB()">
-  <button class="cls" onclick="closeLB()"><i class="ti ti-x"></i></button>
+  <button class="cls" onclick="closeLB()" aria-label="Tutup"><i class="ti ti-x"></i></button>
   <img id="lb-img" src="" alt="">
 </div>
 <div class="toast-wrap" id="toast-wrap"></div>
@@ -366,7 +363,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
-    <button class="modal-close" onclick="closeSettings()"><i class="ti ti-x"></i></button>
+    <button class="modal-close" onclick="closeSettings()" aria-label="Tutup"><i class="ti ti-x"></i></button>
     <h3><i class="ti ti-settings" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Kelola Kategori & Sub-Bab</h3>
     <p class="sub">Edit nama kategori, tambah/hapus kategori, dan kelola bab</p>
     <div id="settings-content"></div>
@@ -380,7 +377,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <!-- CLOUD SYNC MODAL -->
 <div class="modal-overlay" id="sync-modal">
   <div class="modal" style="max-width:460px">
-    <button class="modal-close" onclick="document.getElementById('sync-modal').classList.remove('on')"><i class="ti ti-x"></i></button>
+    <button class="modal-close" onclick="document.getElementById('sync-modal').classList.remove('on')" aria-label="Tutup"><i class="ti ti-x"></i></button>
     <h3><i class="ti ti-cloud" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Sinkronisasi Cloud</h3>
     <p class="sub">Data tersimpan otomatis secara online — nggak perlu backup manual lagi</p>
     <div id="sync-content"></div>
@@ -390,10 +387,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <!-- NOTE EDITOR OVERLAY -->
 <div class="note-editor-overlay" id="note-editor-overlay">
   <div class="note-editor-header">
-    <button class="ibtn" onclick="closeNoteEditor(false)"><i class="ti ti-arrow-left"></i></button>
+    <button class="ibtn" onclick="closeNoteEditor(false)" aria-label="Kembali"><i class="ti ti-arrow-left"></i></button>
     <input class="note-editor-title-inp" id="note-editor-title" placeholder="Judul catatan..." maxlength="120">
     <button class="btn btn-note btn-sm" onclick="saveNote()"><i class="ti ti-device-floppy"></i> Simpan</button>
-    <button class="ibtn del" onclick="deleteCurrentNote()" id="note-del-btn" style="display:none"><i class="ti ti-trash"></i></button>
+    <button class="ibtn del" onclick="deleteCurrentNote()" id="note-del-btn" style="display:none" aria-label="Hapus catatan"><i class="ti ti-trash"></i></button>
   </div>
   <div class="note-editor-body">
     <div class="note-editor-meta-row">
@@ -403,23 +400,23 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     </div>
     <div>
       <div class="rte-toolbar" style="border-color:var(--note)">
-        <button class="rte-btn" onclick="noteCmd('bold')"><b>B</b></button>
-        <button class="rte-btn" onclick="noteCmd('italic')"><i>I</i></button>
-        <button class="rte-btn" onclick="noteCmd('underline')"><u>U</u></button>
+        <button class="rte-btn" onclick="noteCmd('bold')" aria-label="Tebal"><b>B</b></button>
+        <button class="rte-btn" onclick="noteCmd('italic')" aria-label="Miring"><i>I</i></button>
+        <button class="rte-btn" onclick="noteCmd('underline')" aria-label="Garis bawah"><u>U</u></button>
         <div class="rte-sep"></div>
-        <button class="rte-btn" onclick="noteCmd('formatBlock','h2')" style="font-size:11px;font-weight:700">H2</button>
-        <button class="rte-btn" onclick="noteCmd('formatBlock','h3')" style="font-size:10px;font-weight:700">H3</button>
+        <button class="rte-btn" onclick="noteCmd('formatBlock','h2')" style="font-size:11px;font-weight:700" aria-label="Judul 2">H2</button>
+        <button class="rte-btn" onclick="noteCmd('formatBlock','h3')" style="font-size:10px;font-weight:700" aria-label="Judul 3">H3</button>
         <div class="rte-sep"></div>
-        <button class="rte-btn" onclick="noteCmd('insertUnorderedList')"><i class="ti ti-list"></i></button>
-        <button class="rte-btn" onclick="noteCmd('insertOrderedList')"><i class="ti ti-list-numbers"></i></button>
+        <button class="rte-btn" onclick="noteCmd('insertUnorderedList')" aria-label="Daftar bullet"><i class="ti ti-list"></i></button>
+        <button class="rte-btn" onclick="noteCmd('insertOrderedList')" aria-label="Daftar bernomor"><i class="ti ti-list-numbers"></i></button>
         <div class="rte-sep"></div>
-        <button class="rte-btn" onclick="noteCmd('formatBlock','blockquote')" style="font-family:serif">&ldquo;</button>
-        <button class="rte-btn" onclick="insertNoteCode()"><i class="ti ti-code"></i></button>
+        <button class="rte-btn" onclick="noteCmd('formatBlock','blockquote')" style="font-family:serif" aria-label="Kutipan">&ldquo;</button>
+        <button class="rte-btn" onclick="insertNoteCode()" aria-label="Kode"><i class="ti ti-code"></i></button>
         <div class="rte-sep"></div>
-        <button class="rte-btn" onclick="insertNoteTable()"><i class="ti ti-table"></i></button>
-        <button class="rte-btn" onclick="noteCmd('insertHorizontalRule')"><i class="ti ti-minus"></i></button>
+        <button class="rte-btn" onclick="insertNoteTable()" aria-label="Tabel"><i class="ti ti-table"></i></button>
+        <button class="rte-btn" onclick="noteCmd('insertHorizontalRule')" aria-label="Garis horizontal"><i class="ti ti-minus"></i></button>
         <div class="rte-sep"></div>
-        <button class="rte-btn" onclick="noteCmd('removeFormat')"><i class="ti ti-clear-formatting"></i></button>
+        <button class="rte-btn" onclick="noteCmd('removeFormat')" aria-label="Hapus format"><i class="ti ti-clear-formatting"></i></button>
       </div>
       <div class="note-rte-area" id="note-rte-area" contenteditable="true" spellcheck="false" data-ph="Mulai menulis catatan..."></div>
     </div>
@@ -429,7 +426,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 <!-- NOTE CAT MODAL -->
 <div class="modal-overlay" id="note-cat-modal">
   <div class="modal" style="max-width:420px">
-    <button class="modal-close" onclick="closeNoteCatModal()"><i class="ti ti-x"></i></button>
+    <button class="modal-close" onclick="closeNoteCatModal()" aria-label="Tutup"><i class="ti ti-x"></i></button>
     <h3><i class="ti ti-tag" style="color:var(--note);font-size:16px"></i> Kategori Catatan</h3>
     <p class="sub">Buat dan kelola kategori untuk mengorganisir catatan</p>
     <div id="note-cats-content"></div>
@@ -444,13 +441,26 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div id="confirm-icon" style="font-size:36px;margin-bottom:12px"></div>
+    <h3 id="confirm-title" style="margin-bottom:8px"></h3>
+    <p id="confirm-body" style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px"></p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-s" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-warn" id="confirm-action-btn">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <div class="header nopr">
     <h1><i class="ti ti-book-2" style="color:var(--accent)"></i> Exambre</h1>
   </div>
 
   <div id="sec-list" class="sec on">
-    <div class="cats nopr" id="cat-tabs"></div>
+    <div class="cats-wrap"><div class="cats nopr" id="cat-tabs"></div></div>
     <div class="toolbar nopr">
       <div class="search-wrap">
         <i class="ti ti-search"></i>
@@ -493,7 +503,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="field"><label>Gambar soal (opsional)</label><div id="img-area-p-qimgs"></div></div>
         <div class="field">
           <label>Pembahasan <span style="font-weight:400;color:var(--text3)">— rich text</span></label>
-          <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('p','bold')"><b>B</b></button><button class="rte-btn" onclick="rteCmd('p','italic')"><i>I</i></button><button class="rte-btn" onclick="rteCmd('p','underline')"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('p','insertUnorderedList')"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('p','insertOrderedList')"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('p','removeFormat')"><i class="ti ti-clear-formatting"></i></button></div>
+          <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('p','bold')" aria-label="Tebal"><b>B</b></button><button class="rte-btn" onclick="rteCmd('p','italic')" aria-label="Miring"><i>I</i></button><button class="rte-btn" onclick="rteCmd('p','underline')" aria-label="Garis bawah"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('p','insertUnorderedList')" aria-label="Daftar bullet"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('p','insertOrderedList')" aria-label="Daftar bernomor"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('p','removeFormat')" aria-label="Hapus format"><i class="ti ti-clear-formatting"></i></button></div>
           <div class="rte-area" id="rte-p" contenteditable="true" spellcheck="false"></div>
         </div>
         <div class="field"><label>Gambar pembahasan (opsional)</label><div id="img-area-p-eimgs"></div></div>
@@ -519,7 +529,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="field"><label>Gambar soal (opsional)</label><div id="img-area-m-qimgs"></div></div>
         <div class="field">
           <label>Pembahasan</label>
-          <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('m','bold')"><b>B</b></button><button class="rte-btn" onclick="rteCmd('m','italic')"><i>I</i></button><button class="rte-btn" onclick="rteCmd('m','underline')"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('m','insertUnorderedList')"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('m','insertOrderedList')"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('m','removeFormat')"><i class="ti ti-clear-formatting"></i></button></div>
+          <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('m','bold')" aria-label="Tebal"><b>B</b></button><button class="rte-btn" onclick="rteCmd('m','italic')" aria-label="Miring"><i>I</i></button><button class="rte-btn" onclick="rteCmd('m','underline')" aria-label="Garis bawah"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('m','insertUnorderedList')" aria-label="Daftar bullet"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('m','insertOrderedList')" aria-label="Daftar bernomor"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('m','removeFormat')" aria-label="Hapus format"><i class="ti ti-clear-formatting"></i></button></div>
           <div class="rte-area" id="rte-m" contenteditable="true" spellcheck="false"></div>
         </div>
         <div class="field"><label>Gambar pembahasan (opsional)</label><div id="img-area-m-eimgs"></div></div>
@@ -551,7 +561,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <button class="btn btn-note" onclick="openNoteEditor(null)"><i class="ti ti-plus"></i> Catatan Baru</button>
       </div>
     </div>
-    <div class="cats nopr" id="note-cat-tabs"></div>
+    <div class="cats-wrap"><div class="cats nopr" id="note-cat-tabs"></div></div>
     <div id="note-list"></div>
   </div>
 
@@ -588,14 +598,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       </div>
     </div>
     <div class="panel set-panel">
-      <h4><i class="ti ti-arrow-autofit-up" style="color:var(--accent)"></i> Tombol Navigasi Cepat</h4>
-      <p class="set-desc">Tombol melayang untuk lompat ke atas/bawah halaman dengan cepat.</p>
-      <div class="theme-toggle" id="scrollfab-toggle">
-        <button data-v="on" onclick="setScrollFabPref('on')"><i class="ti ti-check"></i> Aktif</button>
-        <button data-v="off" onclick="setScrollFabPref('off')"><i class="ti ti-x"></i> Nonaktif</button>
-      </div>
-    </div>
-    <div class="panel set-panel">
       <h4><i class="ti ti-alert-triangle" style="color:var(--danger)"></i> Reset Total Data</h4>
       <p class="set-desc">Hapus SEMUA soal, kategori, catatan, dan progress dari perangkat ini. Tidak bisa dibatalkan — export dulu kalau perlu backup.</p>
       <button class="btn btn-warn" onclick="clearAllData()"><i class="ti ti-trash"></i> Hapus Semua Data</button>
@@ -616,17 +618,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <button class="bnav-item" role="tab" aria-selected="false" onclick="goSec('stats',this)">
     <i class="ti ti-chart-bar"></i><span>Statistik</span>
   </button>
-  <button class="bnav-item" role="tab" aria-selected="false" onclick="goSec('lainnya',this)">
-    <i class="ti ti-settings"></i><span>Lainnya</span>
+  <button class="bnav-item" role="tab" aria-selected="false" onclick="goSec('lainnya',this)" aria-label="Lainnya">
+    <i class="ti ti-menu-2"></i><span>Lainnya</span>
   </button>
 </nav>
 
-<div class="scroll-fab-wrap nopr" id="scroll-fab-wrap">
-  <button class="scroll-fab" id="scroll-fab-up" onclick="scrollToTop()" title="Ke atas"><i class="ti ti-arrow-up"></i></button>
-  <button class="scroll-fab" id="scroll-fab-down" onclick="scrollToBottom()" title="Ke bawah"><i class="ti ti-arrow-down"></i></button>
-</div>
-
-<script src="./assets/js/three.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js'"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
@@ -634,6 +630,30 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 const SK='cpns-wb-v6';
 const NK='exambre-notes-v1';
 const LETTERS=['A','B','C','D','E'];
+
+/* ── SANITIZE ── */
+const ALLOWED_TAGS=/^(b|i|u|strong|em|br|ul|ol|li|p|code|img|span|div)$/i;
+const SAFE_URL=/^(https?:|data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,)/i;
+const URL_ATTRS=new Set(['src','href','action','formaction','xlink:href']);
+function sanitizeHtml(html){
+  if(!html)return'';
+  const tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  tmp.querySelectorAll('*').forEach(el=>{
+    if(!ALLOWED_TAGS.test(el.tagName)){
+      el.replaceWith(...Array.from(el.childNodes));
+      return;
+    }
+    [...el.attributes].forEach(attr=>{
+      const n=attr.name.toLowerCase();
+      if(n.startsWith('on')){el.removeAttribute(attr.name);return;}
+      if(URL_ATTRS.has(n)&&!SAFE_URL.test(attr.value.trim())){
+        el.removeAttribute(attr.name);
+      }
+    });
+  });
+  return tmp.innerHTML;
+}
 
 const INIT_CATS={};
 /* Migrasi otomatis: kalau kategori masih pakai warna versi sebelumnya (pastel lama ATAU solid cerah ala-gim, belum dikustomisasi user), turunkan jadi palet netral-profesional saat ini */
@@ -665,8 +685,8 @@ function migrateCatColors(){
 }
 
 let qs=[],nid=10,curCat='ALL',curSt='all',curBab='all',searchQ='';
-let cats={},heading={title:'Exambre',name:''};
-let revList=[],revIdx=0,revDone=false;
+let cats={};
+let revList=[],revIdx=0,revDone=false,revSessionXP=0,sessionCorrect=0;
 let imgAreas={};
 let lastDeleted=null;
 let notes=[],noteCats=[],noteNid=1,curNoteCat='ALL',noteSearchQ='',curNoteId=null;
@@ -754,7 +774,6 @@ function loadData(){
       const d=JSON.parse(raw);
       qs=d.qs||[];nid=d.nid||10;
       cats=d.cats||JSON.parse(JSON.stringify(INIT_CATS));
-      heading=d.heading||{title:'Exambre',name:''};
       gami=d.gami||{streak:0,lastActive:null,xp:0,badges:[]};
       if(!qs.length)qs=defaultQ();
       qs.forEach(q=>ensureSrs(q));
@@ -867,12 +886,13 @@ function saveNote(){
 }
 function deleteCurrentNote(){if(curNoteId!==null)deleteNote(curNoteId);}
 function deleteNote(id){
-  if(!confirm('Hapus catatan ini?'))return;
-  notes=notes.filter(n=>n.id!==id);
-  persistNotes();
-  closeNoteEditor();
-  renderNotes();
-  showToast('Catatan dihapus','ok');
+  showConfirm({icon:'🗑️',title:'Hapus catatan?',body:'Catatan ini akan dihapus permanen dan tidak bisa dikembalikan.',actionLabel:'Hapus',onConfirm:()=>{
+    notes=notes.filter(n=>n.id!==id);
+    persistNotes();
+    closeNoteEditor();
+    renderNotes();
+    showToast('Catatan dihapus','ok');
+  }});
 }
 function noteCmd(cmd,val){const el=document.getElementById('note-rte-area');if(el){el.focus();document.execCommand(cmd,false,val||null);}}
 function insertNoteCode(){
@@ -897,7 +917,7 @@ function renderNoteCatModalContent(){
     <div class="note-cat-item">
       <span class="note-cat-color-dot" style="background:${c.color}"></span>
       <span class="note-cat-item-name">${c.name}</span>
-      <button class="ibtn del" style="width:26px;height:26px" onclick="removeNoteCat('${c.id}')"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      <button class="ibtn del" onclick="removeNoteCat('${c.id}')" aria-label="Hapus kategori catatan"><i class="ti ti-trash" style="font-size:13px"></i></button>
     </div>`).join('')+'</div>';
 }
 function addNoteCat(){
@@ -911,13 +931,14 @@ function addNoteCat(){
   renderNoteCatModalContent();
 }
 function removeNoteCat(id){
-  if(!confirm('Hapus kategori ini? Catatan di dalamnya tidak akan terhapus, hanya kehilangan label kategori.'))return;
-  noteCats=noteCats.filter(c=>c.id!==id);
-  notes.forEach(n=>{if(n.catId===id)n.catId='';});
-  renderNoteCatModalContent();
+  showConfirm({icon:'🗑️',title:'Hapus kategori catatan?',body:'Catatan di dalamnya tidak akan terhapus, hanya kehilangan label kategori.',actionLabel:'Hapus',onConfirm:()=>{
+    noteCats=noteCats.filter(c=>c.id!==id);
+    notes.forEach(n=>{if(n.catId===id)n.catId='';});
+    renderNoteCatModalContent();
+  }});
 }
 function persist(){
-  try{localStorage.setItem(SK,JSON.stringify({qs,nid,cats,heading,gami}));}
+  try{localStorage.setItem(SK,JSON.stringify({qs,nid,cats,gami}));}
   catch(e){
     if(e&&(e.name==='QuotaExceededError'||e.code===22)){
       showToast('Penyimpanan penuh! Hapus beberapa gambar besar.','warn');
@@ -928,7 +949,6 @@ function persist(){
   }
   scheduleCloudSave();
 }
-function showSavi(){const s=document.getElementById('savi');if(!s)return;s.classList.add('on');setTimeout(()=>s.classList.remove('on'),2500);}
 
 /* ── SPACED REPETITION ──
    Skema mirip SM-2 yang disederhanakan:
@@ -986,6 +1006,16 @@ function showToast(msg,type='',dur=3000){
   setTimeout(()=>t.classList.add('on'),10);
   setTimeout(()=>{t.classList.remove('on');setTimeout(()=>t.remove(),300);},dur);
 }
+function showToastWithUndo(msg,onUndo,dur=4000){
+  const w=document.getElementById('toast-wrap');
+  const t=document.createElement('div');
+  t.className='toast ok';
+  t.innerHTML=msg+' <button onclick="this.closest(\'.toast\')._undo()" style="background:transparent;border:none;color:inherit;font-weight:700;cursor:pointer;text-decoration:underline;font-size:12px;margin-left:8px;font-family:inherit">Batalkan</button>';
+  t._undo=()=>{onUndo();t.classList.remove('on');setTimeout(()=>t.remove(),300);};
+  w.appendChild(t);
+  setTimeout(()=>t.classList.add('on'),10);
+  setTimeout(()=>{t.classList.remove('on');setTimeout(()=>t.remove(),300);},dur);
+}
 
 /* ── CLOUD SYNC (Firebase) ──
    Ganti backup JSON manual. Soal disimpan satu-per-satu sebagai dokumen Firestore
@@ -1005,8 +1035,9 @@ function getSyncCode(){
 }
 function genSyncCode(){
   const ch='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-  let s='';for(let i=0;i<16;i++)s+=ch[Math.floor(Math.random()*ch.length)];
-  return s;
+  const arr=new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  return Array.from(arr,b=>ch[b%ch.length]).join('');
 }
 function setCloudStatus(state,extra){
   const el=document.getElementById('cloud-status');if(!el)return;
@@ -1047,7 +1078,6 @@ async function cloudLoad(){
   if(mainSnap.exists){
     const data=mainSnap.data();
     if(data.cats)cats=data.cats;
-    if(data.heading)heading=data.heading;
     if(data.nid)nid=data.nid;
     if(data.gami)gami=data.gami;
     const qsnap=await mainRef.collection('questions').get();
@@ -1058,7 +1088,7 @@ async function cloudLoad(){
   }else{
     await cloudSaveNow();
   }
-  localStorage.setItem(SK,JSON.stringify({qs,nid,cats,heading,gami}));
+  localStorage.setItem(SK,JSON.stringify({qs,nid,cats,gami}));
   ensureGami();migrateCatColors();
   buildCatTabs();populateCatSelects();updateBabFilter();render();renderGami();
 }
@@ -1076,9 +1106,9 @@ async function cloudSaveNow(){
   setCloudStatus('syncing');
   try{
     for(const q of qs)await migrateQuestionImages(q);
-    localStorage.setItem(SK,JSON.stringify({qs,nid,cats,heading,gami}));
+    localStorage.setItem(SK,JSON.stringify({qs,nid,cats,gami}));
     const mainRef=fbDb.collection('syncs').doc(syncCode);
-    const docs=[{ref:mainRef,data:JSON.parse(JSON.stringify({cats,heading,nid,gami,updatedAt:Date.now()}))}];
+    const docs=[{ref:mainRef,data:JSON.parse(JSON.stringify({cats,nid,gami,updatedAt:Date.now()}))}];
     qs.forEach(q=>docs.push({ref:mainRef.collection('questions').doc(String(q.id)),data:JSON.parse(JSON.stringify(q))}));
     await commitInChunks(docs);
     if(pendingDeletes.length){
@@ -1163,7 +1193,7 @@ function renderSyncModal(){
     <div class="field"><label>Kode Sync Kamu</label>
       <div style="display:flex;gap:8px">
         <input id="sync-code-display" value="${syncCode||''}" readonly style="font-family:monospace;letter-spacing:.5px">
-        <button class="btn btn-s" onclick="copySyncCode()"><i class="ti ti-copy"></i></button>
+        <button class="btn btn-s" onclick="copySyncCode()" aria-label="Salin kode sync"><i class="ti ti-copy"></i></button>
       </div>
       <div class="opt-ce-hint" style="margin-top:4px">Catat kode ini. Masukkan kode yang sama di HP/browser lain biar datanya nyambung jadi satu.</div>
     </div>
@@ -1189,10 +1219,7 @@ async function connectFirebase(){
   const objText=raw.slice(start,end+1);
   let cfg;
   try{cfg=JSON.parse(objText);}
-  catch(e){
-    try{cfg=Function('"use strict";return ('+objText+')')();}
-    catch(e2){showToast('❌ Format config tidak valid','warn');return;}
-  }
+  catch(e){showToast('❌ Format JSON tidak valid. Pastikan config Firebase berbentuk JSON murni.','warn');return;}
   if(!cfg.apiKey||!cfg.projectId){showToast('❌ Config tidak lengkap (butuh apiKey & projectId)','warn');return;}
   setFbConfig(cfg);
   const btn=document.getElementById('btn-connect-fb');if(btn)btn.classList.add('loading');
@@ -1212,24 +1239,26 @@ async function forceSyncNow(){
   if(btn)btn.classList.remove('loading');
   showToast('Sinkron selesai','ok');
 }
-async function switchSyncCode(){
+function switchSyncCode(){
   const inp=document.getElementById('other-sync-code');if(!inp)return;
   const code=inp.value.trim();
   if(!code){showToast('Masukkan kode sync dulu','warn');return;}
-  if(!confirm('Ini akan mengganti semua data di HP ini dengan data dari kode tersebut. Lanjutkan?'))return;
-  localStorage.setItem('cpns-sync-code',code);
-  syncCode=code;
-  showToast('Memuat data...','');
-  await cloudLoad();
-  renderSyncModal();
-  showToast('✅ Data berhasil dimuat','ok');
+  showConfirm({icon:'🔄',title:'Ganti kode sync?',body:'Ini akan mengganti semua data di HP ini dengan data dari kode tersebut. Lanjutkan?',actionLabel:'Ganti',onConfirm:async()=>{
+    localStorage.setItem('cpns-sync-code',code);
+    syncCode=code;
+    showToast('Memuat data...','');
+    await cloudLoad();
+    renderSyncModal();
+    showToast('✅ Data berhasil dimuat','ok');
+  }});
 }
 function disconnectCloud(){
-  if(!confirm('Putuskan Cloud Sync? Data di HP ini tetap aman, tapi gak akan tersimpan online lagi sampai disambungkan ulang.'))return;
-  clearFbConfig();fbReady=false;fbApp=null;fbDb=null;fbStorage=null;
-  setCloudStatus('off');
-  document.getElementById('sync-modal').classList.remove('on');
-  showToast('Cloud Sync diputuskan','ok');
+  showConfirm({icon:'🔌',title:'Putuskan Cloud Sync?',body:'Data di HP ini tetap aman, tapi gak akan tersimpan online lagi sampai disambungkan ulang.',actionLabel:'Putuskan',onConfirm:()=>{
+    clearFbConfig();fbReady=false;fbApp=null;fbDb=null;fbStorage=null;
+    setCloudStatus('off');
+    document.getElementById('sync-modal').classList.remove('on');
+    showToast('Cloud Sync diputuskan','ok');
+  }});
 }
 
 /* ── IMAGE COMPRESSION ── */
@@ -1260,6 +1289,26 @@ function defaultQ(){
 /* ── CATEGORY ── */
 function getCatKeys(){return Object.keys(cats);}
 function catBadgeStyle(k){const c=cats[k];if(!c)return'background:#eee;color:#333';return`background:${c.color};color:${c.textColor}`;}
+function initCatScroll(scrollEl){
+  if(!scrollEl)return;
+  const wrap=scrollEl.closest('.cats-wrap');
+  if(!wrap)return;
+  function update(){
+    const overflow=scrollEl.scrollWidth>scrollEl.clientWidth+2;
+    wrap.classList.toggle('no-overflow',!overflow);
+    if(overflow){
+      const atEnd=scrollEl.scrollLeft+scrollEl.clientWidth>=scrollEl.scrollWidth-4;
+      wrap.classList.toggle('at-end',atEnd);
+    }
+  }
+  scrollEl.removeEventListener('scroll',update);
+  scrollEl.addEventListener('scroll',update,{passive:true});
+  if(!wrap._roInitialized){
+    new ResizeObserver(update).observe(scrollEl);
+    wrap._roInitialized=true;
+  }
+  update();
+}
 function buildCatTabs(){
   const el=document.getElementById('cat-tabs');if(!el)return;
   el.setAttribute('role','tablist');
@@ -1269,6 +1318,8 @@ function buildCatTabs(){
       const cnt=qs.filter(q=>q.cat===k).length;
       return`<button class="ctab${k===curCat?' on':''}" role="tab" aria-selected="${k===curCat}" onclick="fCat('${k}',this)" style="${curCat===k?'':'color:'+cats[k].textColor+';border-color:'+cats[k].color}">${cats[k].name||k} <span style="opacity:.6;font-size:10px">${cnt}</span></button>`;
     }).join('');
+  initCatScroll(document.getElementById('cat-tabs'));
+  initCatScroll(document.getElementById('note-cat-tabs'));
 }
 function populateCatSelects(){
   ['p-cat','m-cat'].forEach(id=>{
@@ -1304,7 +1355,6 @@ function goSec(id,btn){
   target.classList.add('on');btn.classList.add('on');btn.setAttribute('aria-selected','true');
   target.style.animation='none';requestAnimationFrame(()=>{target.style.animation='secIn var(--dur-2) var(--ease)';});
   if(id==='review')startReview();else if(id==='stats')renderStatsPage();else if(id==='lainnya')renderLainnya();else if(id==='catatan')renderNotes();else render();
-  setTimeout(updateScrollFab,120);
 }
 
 /* ── TAB LAINNYA: tema, export/import ── */
@@ -1312,10 +1362,6 @@ function renderLainnya(){
   const cur=localStorage.getItem('exambre-theme')||'auto';
   document.querySelectorAll('#theme-toggle button').forEach(b=>{
     b.classList.toggle('on', b.dataset.th===cur);
-  });
-  const fabCur=localStorage.getItem('exambre-scrollfab')!=='off'?'on':'off';
-  document.querySelectorAll('#scrollfab-toggle button').forEach(b=>{
-    b.classList.toggle('on', b.dataset.v===fabCur);
   });
 }
 function applyTheme(theme){
@@ -1328,30 +1374,8 @@ function applyTheme(theme){
   }
   renderLainnya();
 }
-/* ── FLOATING SCROLL BUTTON ── */
-function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
-function scrollToBottom(){window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'});}
-function setScrollFabPref(v){
-  localStorage.setItem('exambre-scrollfab',v);
-  renderLainnya();
-  updateScrollFab();
-}
-function updateScrollFab(){
-  const wrap=document.getElementById('scroll-fab-wrap');if(!wrap)return;
-  const enabled=localStorage.getItem('exambre-scrollfab')!=='off';
-  if(!enabled){wrap.style.display='none';return;}
-  wrap.style.display='flex';
-  const upBtn=document.getElementById('scroll-fab-up');
-  const downBtn=document.getElementById('scroll-fab-down');
-  const y=window.scrollY||window.pageYOffset;
-  const maxY=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-  upBtn.classList.toggle('show',y>200);
-  downBtn.classList.toggle('show',maxY>200&&y<maxY-200);
-}
-window.addEventListener('scroll',()=>{clearTimeout(window._sfabT);window._sfabT=setTimeout(updateScrollFab,50);},{passive:true});
-window.addEventListener('resize',()=>{clearTimeout(window._sfabT);window._sfabT=setTimeout(updateScrollFab,150);});
 async function exportData(){
-  const payload={app:'Exambre',version:1,exportedAt:new Date().toISOString(),qs,nid,cats,heading,gami,notes,noteCats,noteNid};
+  const payload={app:'Exambre',version:1,exportedAt:new Date().toISOString(),qs,nid,cats,gami,notes,noteCats,noteNid};
   const json=JSON.stringify(payload,null,2);
   const filename=`exambre-backup-${new Date().toISOString().slice(0,10)}.json`;
   const isNative=window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform();
@@ -1396,30 +1420,32 @@ function importDataFile(input){
     let data;
     try{data=JSON.parse(e.target.result);}catch(err){showToast('File bukan format JSON yang valid','warn');input.value='';return;}
     if(!data||!Array.isArray(data.qs)){showToast('File tidak dikenali sebagai backup Exambre','warn');input.value='';return;}
-    if(!confirm(`Import ${data.qs.length} soal? Ini akan MENGGANTI semua data yang ada sekarang di app ini.`)){input.value='';return;}
-    qs=data.qs;
-    nid=data.nid||(qs.reduce((m,q)=>Math.max(m,q.id||0),0)+1);
-    cats=data.cats||{};
-    heading=data.heading||heading;
-    gami=data.gami||gami;
-    qs.forEach(q=>ensureSrs(q));
-    ensureGami();migrateCatColors();
-    if(Array.isArray(data.notes)){notes=data.notes;noteCats=data.noteCats||[];noteNid=data.noteNid||(notes.reduce((m,n)=>Math.max(m,n.id||0),0)+1);persistNotes();}
-    persist();
-    buildCatTabs();populateCatSelects();updateBabFilter();render();renderGami();
-    showToast('Import berhasil','ok');
-    input.value='';
+    showConfirm({icon:'📥',title:'Import data?',body:`Import ${data.qs.length} soal? Ini akan MENGGANTI semua data yang ada sekarang di app ini.`,actionLabel:'Import',onConfirm:()=>{
+      qs=data.qs;
+      nid=data.nid||(qs.reduce((m,q)=>Math.max(m,q.id||0),0)+1);
+      cats=data.cats||{};
+      gami=data.gami||gami;
+      qs.forEach(q=>ensureSrs(q));
+      ensureGami();migrateCatColors();
+      if(Array.isArray(data.notes)){notes=data.notes;noteCats=data.noteCats||[];noteNid=data.noteNid||(notes.reduce((m,n)=>Math.max(m,n.id||0),0)+1);persistNotes();}
+      persist();
+      buildCatTabs();populateCatSelects();updateBabFilter();render();renderGami();
+      showToast('Import berhasil','ok');
+      input.value='';
+    }});
   };
   reader.onerror=()=>{showToast('Gagal membaca file','warn');input.value='';};
   reader.readAsText(file);
 }
 function clearAllData(){
-  if(!confirm('Yakin ingin menghapus SEMUA data (soal, kategori, catatan, progress)? Tindakan ini tidak bisa dibatalkan.'))return;
-  if(!confirm('Konfirmasi sekali lagi: semua data akan hilang permanen dari perangkat ini. Lanjutkan?'))return;
-  try{localStorage.removeItem(SK);}catch(e){}
-  try{localStorage.removeItem(NK);}catch(e){}
-  showToast('Semua data dihapus. Memuat ulang...','ok');
-  setTimeout(()=>location.reload(),800);
+  showConfirm({icon:'⛔',title:'Hapus SEMUA data?',body:'Yakin ingin menghapus SEMUA data (soal, kategori, catatan, progress)? Tindakan ini tidak bisa dibatalkan.',actionLabel:'Ya, Hapus Semuanya',onConfirm:()=>{
+    showConfirm({icon:'⛔',title:'Konfirmasi sekali lagi',body:'Semua data akan hilang permanen dari perangkat ini. Lanjutkan?',actionLabel:'Ya, Hapus Semuanya',onConfirm:()=>{
+      try{localStorage.removeItem(SK);}catch(e){}
+      try{localStorage.removeItem(NK);}catch(e){}
+      showToast('Semua data dihapus. Memuat ulang...','ok');
+      setTimeout(()=>location.reload(),800);
+    }});
+  }});
 }
 // FIX BUG #2: reset curBab saat ganti kategori
 function fCat(c,btn){
@@ -1466,21 +1492,10 @@ function renderImgArea(areaId){
   }
 }
 function renderScaleWrap(areaId,idx,img){
-  const w=img.width||120;
-  return`<div class="img-scale-wrap" id="sw-${areaId}-${idx}">
-    <img src="${img.src}" alt="" style="max-height:${w}px;max-width:100%;width:auto;object-fit:contain" onclick="openLB('${img.src}')">
-    <div class="img-scale-row"><label>Ukuran cetak:</label><input type="range" min="40" max="400" value="${w}" oninput="liveScale('${areaId}',${idx},this.value)"><span class="pct" id="pct-${areaId}-${idx}">${w}px</span><button class="rm-img-btn" onclick="rmAreaImg('${areaId}',${idx})"><i class="ti ti-trash" style="font-size:12px"></i></button></div>
+  return`<div class="img-stored-item" id="sw-${areaId}-${idx}">
+    <img src="${img.src}" alt="" style="max-height:200px;max-width:100%;object-fit:contain" onclick="openLB('${img.src}')">
+    <button class="rm-img-btn" onclick="rmAreaImg('${areaId}',${idx})" aria-label="Hapus gambar"><i class="ti ti-trash" style="font-size:12px"></i></button>
   </div>`;
-}
-// FIX BUG #3: setiap area punya timeout sendiri
-function liveScale(areaId,idx,val){
-  const items=getArea(areaId);if(!items[idx])return;
-  items[idx].width=parseInt(val);
-  const sw=document.getElementById('sw-'+areaId+'-'+idx);
-  if(sw){const img=sw.querySelector('img');if(img){img.style.maxHeight=val+'px';img.style.width='auto';}const pct=document.getElementById('pct-'+areaId+'-'+idx);if(pct)pct.textContent=val+'px';}
-  if(!liveScale._t)liveScale._t={};
-  clearTimeout(liveScale._t[areaId]);
-  liveScale._t[areaId]=setTimeout(persist,800);
 }
 function rmAreaImg(areaId,idx){getArea(areaId).splice(idx,1);renderImgArea(areaId);}
 function isUrl(s){try{const u=new URL(s);return u.protocol==='http:'||u.protocol==='https:';}catch{return false;}}
@@ -1545,35 +1560,58 @@ function buildManualOptRows(prefix='m',existingOpts={}){
   });
 }
 
-/* ── OPT IMAGE SCALE ── */
+/* ── OPT IMAGE ── */
 function renderOptImgScaled(html,qid,letter,legacyImgSrc){
   if(!html&&!legacyImgSrc)return'';
-  let content=html||'',imgIdx=0;
+  let content=html||'';
   content=content.replace(/<img([^>]*)>/gi,(match,attrs)=>{
     const srcM=attrs.match(/src=["']([^"']+)["']/i);const src=srcM?srcM[1]:'';if(!src)return match;
-    const key=`opt-${qid}-${letter}-${imgIdx++}`;const w=getOptImgWidth(qid,letter,0);
-    return`<div class="opt-img-scale-wrap" id="sw-${key}"><img src="${src}" style="max-height:${w}px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin:3px 0;cursor:pointer" onclick="openLB('${src}')"><div class="img-scale-row nopr" style="padding:3px 8px"><label style="font-size:10px">Ukuran:</label><input type="range" min="40" max="300" value="${w}" oninput="liveOptScale('${key}','${qid}','${letter}',this.value)"><span class="pct" id="pct-${key}" style="font-size:10px">${w}px</span></div></div>`;
+    return`<img src="${src}" style="max-height:120px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin:3px 0;cursor:pointer" onclick="openLB('${src}')">`;
   });
-  if(!html&&legacyImgSrc){const key=`opt-${qid}-${letter}-0`;const w=getOptImgWidth(qid,letter,0);content=`<div class="opt-img-scale-wrap" id="sw-${key}"><img src="${legacyImgSrc}" style="max-height:${w}px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin:3px 0;cursor:pointer" onclick="openLB('${legacyImgSrc}')"><div class="img-scale-row nopr" style="padding:3px 8px"><label style="font-size:10px">Ukuran:</label><input type="range" min="40" max="300" value="${w}" oninput="liveOptScale('${key}','${qid}','${letter}',this.value)"><span class="pct" id="pct-${key}" style="font-size:10px">${w}px</span></div></div>`;}
+  if(!html&&legacyImgSrc){content=`<img src="${legacyImgSrc}" style="max-height:120px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin:3px 0;cursor:pointer" onclick="openLB('${legacyImgSrc}')">`;}
   return content;
-}
-function getOptImgWidth(qid,letter,imgIdx){const q=qs.find(x=>x.id===qid);if(!q||!q.optImgWidths)return 60;return q.optImgWidths[letter+'-'+imgIdx]||120;}
-function liveOptScale(key,qid,letter,val){
-  const sw=document.getElementById('sw-'+key);if(sw){const img=sw.querySelector('img');if(img){img.style.maxHeight=val+'px';img.style.width='auto';}const pct=document.getElementById('pct-'+key);if(pct)pct.textContent=val+'px';}
-  const q=qs.find(x=>x.id===parseInt(qid));if(!q)return;
-  if(!q.optImgWidths)q.optImgWidths={};q.optImgWidths[letter+'-0']=parseInt(val);
-  if(!liveOptScale._t)liveOptScale._t={};clearTimeout(liveOptScale._t[key]);liveOptScale._t[key]=setTimeout(persist,800);
 }
 
 /* ── RENDER ── */
 function render(){
   buildCatTabs();updateBabFilter();updateDueBadge();renderGami();checkBadges();
   const list=getFiltered(),el=document.getElementById('qlist');
+  if(!qs.length&&getCatKeys().length===0){
+    el.innerHTML=`<div class="onboard-card">
+  <i class="ti ti-book-2" style="font-size:40px;color:var(--accent);margin-bottom:12px;display:block"></i>
+  <h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Selamat datang di Exambre!</h3>
+  <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">
+    Mulai dengan membuat kategori soal pertama kamu — misalnya TIU, TWK, atau TKP.
+  </p>
+  <div style="display:flex;gap:8px;justify-content:center">
+    <input id="onboard-cat-inp" placeholder="Nama kategori (cth: TIU)" 
+      style="font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;background:var(--bg);color:var(--text);font-family:inherit;flex:1;max-width:220px"
+      onkeydown="if(event.key==='Enter')onboardCreateCat()">
+    <button class="btn btn-p" onclick="onboardCreateCat()">
+      <i class="ti ti-plus"></i> Buat Kategori
+    </button>
+  </div>
+</div>`;
+    return;
+  }
   if(!list.length){
     el.innerHTML='<div class="empty"><i class="ti ti-books"></i><p>'+(searchQ?`Soal dengan kata "<b>${searchQ}</b>" tidak ditemukan.`:'Belum ada soal'+(curCat!=='ALL'?' untuk kategori ini':'')+'.<br>Tambahkan soal yang salah dijawab biar bisa dilatih ulang.')+'</p>'+(searchQ?'':'<button class="btn btn-p" style="margin-top:16px" onclick="togglePanel()"><i class="ti ti-plus"></i> Tambah Soal</button>')+'</div>';
     return;
   }
   el.innerHTML=list.map((q,i)=>renderQCard(q,i)).join('');
+}
+function onboardCreateCat(){
+  const inp=document.getElementById('onboard-cat-inp');
+  const name=inp?inp.value.trim():'';
+  if(!name){showToast('Masukkan nama kategori dulu','warn');return;}
+  const key=name.toUpperCase().replace(/\s+/g,'_').slice(0,10);
+  cats[key]={name,color:'#EAF1FE',textColor:'#3552CC',babs:['Umum']};
+  persist();
+  buildCatTabs();
+  populateCatSelects();
+  render();
+  showToast('Kategori "'+name+'" berhasil dibuat!','ok');
+  togglePanel();
 }
 
 function renderQCard(q,i){
@@ -1591,12 +1629,12 @@ function renderQCard(q,i){
         ${q.mastered?'<span class="bM"><i class="ti ti-check" style="font-size:10px"></i> Dikuasai</span>':''}
       </div>
       <div class="qacts nopr">
-        <button class="ibtn edit-btn" title="Edit" onclick="toggleInlineEdit(${q.id})"><i class="ti ti-pencil"></i></button>
-        <button class="ibtn ok" title="${q.mastered?'Tandai belum dikuasai':'Tandai dikuasai'}" onclick="toggleM(${q.id})"><i class="ti ti-${q.mastered?'rotate':'check'}"></i></button>
-        <button class="ibtn del" title="Hapus" onclick="delQ(${q.id})"><i class="ti ti-trash"></i></button>
+        <button class="ibtn edit-btn" title="Edit" onclick="toggleInlineEdit(${q.id})" aria-label="Edit soal"><i class="ti ti-pencil"></i></button>
+        <button class="ibtn ok" title="${q.mastered?'Tandai belum dikuasai':'Tandai dikuasai'}" onclick="toggleM(${q.id})" aria-label="${q.mastered?'Tandai belum dikuasai':'Tandai dikuasai'}"><i class="ti ti-${q.mastered?'rotate':'check'}"></i></button>
+        <button class="ibtn del" title="Hapus" onclick="delQ(${q.id})" aria-label="Hapus soal"><i class="ti ti-trash"></i></button>
       </div>
     </div>
-    <p class="qtext">${(q.q||'').replace(/^(\s*[A-E]\s*){2,}/,'').trim()}</p>
+    <p class="qtext">${sanitizeHtml((q.q||'').replace(/^(\s*[A-E]\s*){2,}/,'').trim())}</p>
     ${renderImgList(q.id,q.qimgs)}
     <div class="opts-list${hasImgs?' has-images':''}">
       ${(q.opts||[]).map((o,oi)=>{
@@ -1605,32 +1643,31 @@ function renderQCard(q,i){
         if(!o||!o.trim()||o==='<br>')return''; // FIX: skip empty opts
         let c='';if(l===q.wrong)c='ow';if(l===q.correct)c='oc';
         const imgSrc=q.optImgs&&q.optImgs[l]?q.optImgs[l]:'';
-        const scaled=renderOptImgScaled(o,q.id,l,imgSrc);
+        const scaled=renderOptImgScaled(sanitizeHtml(o),q.id,l,imgSrc);
         return`<div class="opt-item ${c}"><span class="ltr">${l}.</span><div class="opt-html-content">${scaled}</div>${l===q.wrong?'<span class="opt-tag">✗ jawaban saya</span>':''}${l===q.correct?'<span class="opt-tag">✓ benar</span>':''}</div>`;
       }).join('')}
     </div>
     ${renderExpBlock(q)}
-    ${renderInlineEditForm(q)}
+    <div class="inline-edit" id="inline-edit-${q.id}" data-qid="${q.id}"></div>
   </div>`;
 }
 
 function renderImgList(qid,imgs){
   if(!imgs||!imgs.length)return'';
-  return`<div class="qimgs-section">`+imgs.map((img,i)=>{
-    const ei=typeof img==='string'?{src:img,width:120}:img;const w=ei.width||120;
-    return`<div class="img-scale-wrap"><img src="${ei.src}" alt="" style="max-height:${w}px;max-width:100%;width:auto;object-fit:contain;border-radius:var(--radius);border:0.5px solid var(--border);cursor:pointer" onclick="openLB('${ei.src}')"><div class="img-scale-row"><label>Ukuran cetak:</label><input type="range" min="40" max="400" value="${w}" oninput="scaleQImg(${qid},${i},this.value)"><span class="pct" id="qpct-${qid}-${i}">${w}px</span></div></div>`;
+  return`<div class="qimgs-section">`+imgs.map((img)=>{
+    const ei=typeof img==='string'?{src:img}:img;
+    return`<img src="${ei.src}" alt="" style="max-height:200px;max-width:100%;object-fit:contain;border-radius:var(--radius);border:0.5px solid var(--border);cursor:pointer;display:block" onclick="openLB('${ei.src}')">`;
   }).join('')+'</div>';
 }
 function renderExpBlock(q){
   if(!q.expHtml&&(!q.eimgs||!q.eimgs.length))return'';
   return`<div class="exp-block"><div class="exp-label"><i class="ti ti-bulb" style="font-size:11px;vertical-align:-1px"></i> Pembahasan</div>
-    <div class="exp-content">${q.expHtml||''}</div>
-    ${q.eimgs&&q.eimgs.length?'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">'+q.eimgs.map((img,ii)=>{const ei=typeof img==='string'?{src:img,width:120}:img;return`<div class="img-scale-wrap"><img src="${ei.src}" alt="" style="max-height:${ei.width||120}px;max-width:100%;width:auto;object-fit:contain" onclick="openLB('${ei.src}')"><div class="img-scale-row"><label>Ukuran cetak:</label><input type="range" min="40" max="400" value="${ei.width||120}" oninput="scaleStoredEimg(${q.id},${ii},this.value)"><span class="pct" id="epct-${q.id}-${ii}">${ei.width||120}px</span><button class="rm-img-btn" onclick="rmStoredEimg(${q.id},${ii})"><i class="ti ti-trash" style="font-size:12px"></i></button></div></div>`;}).join('')+'</div>':''}
+    <div class="exp-content">${sanitizeHtml(q.expHtml||'')}</div>
+    ${q.eimgs&&q.eimgs.length?'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">'+q.eimgs.map((img,ii)=>{const ei=typeof img==='string'?{src:img}:img;return`<div class="img-stored-item"><img src="${ei.src}" alt="" style="max-height:200px;max-width:100%;object-fit:contain;border-radius:var(--radius);border:0.5px solid var(--border);cursor:pointer;display:block" onclick="openLB('${ei.src}')"><button class="rm-img-btn" onclick="rmStoredEimg(${q.id},${ii})" aria-label="Hapus gambar"><i class="ti ti-trash" style="font-size:12px"></i></button></div>`;}).join('')+'</div>':''}
   </div>`;
 }
-function renderInlineEditForm(q){
-  return`<div class="inline-edit" id="inline-edit-${q.id}" data-qid="${q.id}">
-    <div class="inline-edit-title"><i class="ti ti-pencil"></i> Edit Soal</div>
+function buildInlineEditHTML(q){
+  return`<div class="inline-edit-title"><i class="ti ti-pencil"></i> Edit Soal</div>
     <div class="g2">
       <div class="field"><label>Kategori</label><select id="e-cat-${q.id}" onchange="updateBabSelectEdit(${q.id})">
         ${getCatKeys().map(k=>`<option value="${k}"${q.cat===k?' selected':''}>${cats[k].name||k}</option>`).join('')}
@@ -1649,38 +1686,37 @@ function renderInlineEditForm(q){
     </div>
     <div class="field"><label>Gambar soal</label><div id="img-area-edit-qimgs-${q.id}"></div></div>
     <div class="field"><label>Pembahasan</label>
-      <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('e-${q.id}','bold')"><b>B</b></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','italic')"><i>I</i></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','underline')"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('e-${q.id}','insertUnorderedList')"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','insertOrderedList')"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('e-${q.id}','removeFormat')"><i class="ti ti-clear-formatting"></i></button></div>
+      <div class="rte-toolbar"><button class="rte-btn" onclick="rteCmd('e-${q.id}','bold')" aria-label="Tebal"><b>B</b></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','italic')" aria-label="Miring"><i>I</i></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','underline')" aria-label="Garis bawah"><u>U</u></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('e-${q.id}','insertUnorderedList')" aria-label="Daftar bullet"><i class="ti ti-list"></i></button><button class="rte-btn" onclick="rteCmd('e-${q.id}','insertOrderedList')" aria-label="Daftar bernomor"><i class="ti ti-list-numbers"></i></button><div class="rte-sep"></div><button class="rte-btn" onclick="rteCmd('e-${q.id}','removeFormat')" aria-label="Hapus format"><i class="ti ti-clear-formatting"></i></button></div>
       <div class="rte-area" id="rte-e-${q.id}" contenteditable="true" spellcheck="false">${q.expHtml||''}</div>
     </div>
     <div class="field"><label>Gambar pembahasan <span style="font-weight:400;color:var(--text3)">(Ctrl+V screenshot)</span></label><div id="img-area-edit-eimgs-${q.id}"></div></div>
     <div class="btn-row">
       <button class="btn btn-warn" onclick="toggleInlineEdit(${q.id})">Batal</button>
       <button class="btn btn-p" onclick="saveEdit(${q.id})"><i class="ti ti-device-floppy"></i> Simpan Perubahan</button>
-    </div>
-  </div>`;
+    </div>`;
 }
 
 /* ── INLINE EDIT ── */
 function toggleInlineEdit(id){
   const el=document.getElementById('inline-edit-'+id);if(!el)return;
   const isOpen=el.classList.contains('on');
-  document.querySelectorAll('.inline-edit.on').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.inline-edit.on').forEach(e=>{e.classList.remove('on');e.innerHTML='';});
   if(!isOpen){
-    el.classList.add('on');
     const q=qs.find(x=>x.id===id);if(!q)return;
+    el.innerHTML=buildInlineEditHTML(q);
+    el.classList.add('on');
     imgAreas['edit-qimgs-'+id]=(q.qimgs||[]).map(i=>typeof i==='string'?{src:i,width:120}:i);
     imgAreas['edit-eimgs-'+id]=(q.eimgs||[]).map(i=>typeof i==='string'?{src:i,width:120}:i);
     renderImgArea('edit-qimgs-'+id);renderImgArea('edit-eimgs-'+id);
     LETTERS.forEach(l=>{
       const ce=document.getElementById('e-opt-'+id+'-'+l);if(!ce)return;
-      const fresh=ce.cloneNode(true);ce.parentNode.replaceChild(fresh,ce);
-      fresh.addEventListener('paste',async e=>{
+      ce.addEventListener('paste',async e=>{
         const imgItem=[...e.clipboardData.items].find(it=>it.type.startsWith('image/'));
-        if(imgItem){e.preventDefault();const b=await compressImg(imgItem.getAsFile());if(b){fresh.focus();document.execCommand('insertImage',false,b);}return;}
+        if(imgItem){e.preventDefault();const b=await compressImg(imgItem.getAsFile());if(b){ce.focus();document.execCommand('insertImage',false,b);}return;}
         const text=e.clipboardData.getData('text/plain').trim();
-        if(text&&isUrl(text)){e.preventDefault();fresh.focus();document.execCommand('insertImage',false,text);return;}
+        if(text&&isUrl(text)){e.preventDefault();ce.focus();document.execCommand('insertImage',false,text);return;}
       });
-      fresh.addEventListener('click',e=>{if(e.target.tagName==='IMG')openLB(e.target.src);});
+      ce.addEventListener('click',e=>{if(e.target.tagName==='IMG')openLB(e.target.src);});
     });
   }
 }
@@ -1714,8 +1750,17 @@ function saveEdit(id){
 /* ── PANEL ── */
 function togglePanel(){
   if(getCatKeys().length===0){
-    showToast('Tambahkan kategori dulu sebelum menambah soal','warn',3500);
-    openSettings();
+    const inp=document.getElementById('onboard-cat-inp');
+    if(inp){
+      inp.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(()=>inp.focus(),350);
+    } else {
+      goSec('list',document.querySelector('.bnav-item'));
+      setTimeout(()=>{
+        const inp2=document.getElementById('onboard-cat-inp');
+        if(inp2){inp2.scrollIntoView({behavior:'smooth',block:'center'});inp2.focus();}
+      },200);
+    }
     return;
   }
   const p=document.getElementById('add-panel'),isOpen=p.style.display!=='none';
@@ -1871,12 +1916,13 @@ function resetAddForm(){
 /* ── CARD ACTIONS ── */
 function delQ(id){
   const q=qs.find(x=>x.id===id);if(!q)return;
-  if(!confirm('Hapus soal ini?'))return;
-  lastDeleted={...q,opts:[...(q.opts||[])],qimgs:[...(q.qimgs||[])],eimgs:[...(q.eimgs||[])]};
-  qs=qs.filter(q=>q.id!==id);
-  pendingDeletes.push(id);
-  persist();render();
-  showToast('Soal dihapus. <a onclick="undoDel()">Undo</a>','warn',4000);
+  showConfirm({icon:'🗑️',title:'Hapus soal?',body:'Soal ini akan dihapus permanen.',actionLabel:'Hapus',onConfirm:()=>{
+    lastDeleted={...q,opts:[...(q.opts||[])],qimgs:[...(q.qimgs||[])],eimgs:[...(q.eimgs||[])]};
+    qs=qs.filter(q=>q.id!==id);
+    pendingDeletes.push(id);
+    persist();render();
+    showToast('Soal dihapus. <a onclick="undoDel()">Undo</a>','warn',4000);
+  }});
 }
 function undoDel(){
   if(!lastDeleted)return;
@@ -1888,33 +1934,41 @@ function undoDel(){
 }
 function toggleM(id){
   const q=qs.find(x=>x.id===id);if(!q)return;
+  const prevMastered=q.mastered;
+  const prevSrs={...ensureSrs(q)};
   q.mastered=!q.mastered;
   const s=ensureSrs(q);
   if(q.mastered){s.reps=3;s.interval=21;s.ease=Math.max(s.ease,2.2);s.due=Date.now()+21*DAY_MS;}
   else{s.reps=0;s.interval=0;s.due=Date.now()-1;}
   persist();render();
-}
-function scaleQImg(qid,idx,val){
-  const q=qs.find(x=>x.id===qid);if(!q||!q.qimgs||!q.qimgs[idx])return;
-  if(typeof q.qimgs[idx]==='string')q.qimgs[idx]={src:q.qimgs[idx],width:parseInt(val)};
-  else q.qimgs[idx].width=parseInt(val);
-  const pct=document.getElementById('qpct-'+qid+'-'+idx);
-  if(pct){pct.textContent=val+'px';const wrap=pct.closest('.img-scale-wrap');if(wrap){const img=wrap.querySelector('img');if(img){img.style.maxHeight=val+'px';img.style.width='auto';}}}
-  if(!scaleQImg._t)scaleQImg._t={};clearTimeout(scaleQImg._t[qid+'-'+idx]);scaleQImg._t[qid+'-'+idx]=setTimeout(persist,800);
-}
-function scaleStoredEimg(qid,idx,val){
-  const q=qs.find(x=>x.id===qid);if(!q||!q.eimgs[idx])return;
-  if(typeof q.eimgs[idx]==='string')q.eimgs[idx]={src:q.eimgs[idx],width:parseInt(val)};
-  else q.eimgs[idx].width=parseInt(val);
-  const pct=document.getElementById('epct-'+qid+'-'+idx);if(pct)pct.textContent=val+'px';
-  const sw=pct&&pct.closest('.img-scale-wrap');if(sw){const img=sw.querySelector('img');if(img){img.style.maxHeight=val+'px';img.style.width='auto';}}
-  if(!scaleStoredEimg._t)scaleStoredEimg._t={};clearTimeout(scaleStoredEimg._t[qid+'-'+idx]);scaleStoredEimg._t[qid+'-'+idx]=setTimeout(persist,800);
+  const msg=q.mastered?'Soal ditandai <b>Dikuasai</b>':'Tanda dikuasai dihapus';
+  showToastWithUndo(msg,()=>{
+    q.mastered=prevMastered;
+    q.srs=prevSrs;
+    persist();render();
+  });
 }
 function rmStoredEimg(qid,idx){const q=qs.find(x=>x.id===qid);if(!q)return;q.eimgs.splice(idx,1);persist();render();}
 
 /* ── LIGHTBOX ── */
 function openLB(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').classList.add('on');}
 function closeLB(){document.getElementById('lightbox').classList.remove('on');}
+
+/* ── CONFIRM MODAL ── */
+function showConfirm(opts){
+  // opts: { icon, title, body, actionLabel, actionClass, onConfirm }
+  document.getElementById('confirm-icon').textContent=opts.icon||'⚠️';
+  document.getElementById('confirm-title').textContent=opts.title||'Konfirmasi';
+  document.getElementById('confirm-body').textContent=opts.body||'';
+  const btn=document.getElementById('confirm-action-btn');
+  btn.textContent=opts.actionLabel||'Lanjutkan';
+  btn.className='btn '+(opts.actionClass||'btn-warn');
+  btn.onclick=()=>{closeConfirm();opts.onConfirm();};
+  document.getElementById('confirm-modal').classList.add('on');
+}
+function closeConfirm(){
+  document.getElementById('confirm-modal').classList.remove('on');
+}
 
 /* ── SETTINGS ── */
 function openSettings(){renderSettingsContent();document.getElementById('settings-modal').classList.add('on');}
@@ -1932,25 +1986,33 @@ function renderSettingsContent(){
       <input id="cat-name-${k}" value="${c.name||k}" placeholder="Nama kategori" style="font-weight:600">
       <div class="cat-header-right">
         <label style="font-size:11px;color:var(--text2);flex-shrink:0;display:flex;align-items:center;gap:4px">Warna: <input type="color" id="cat-color-${k}" value="${c.color||'#eeeeee'}" style="width:28px;height:22px;border:none;cursor:pointer;border-radius:4px;padding:0"></label>
-        <button class="rm-bab" onclick="removeCategory('${k}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;display:flex;align-items:center"><i class="ti ti-trash"></i></button>
+        <button class="rm-bab" onclick="removeCategory('${k}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;display:flex;align-items:center" aria-label="Hapus kategori"><i class="ti ti-trash"></i></button>
       </div>
     </div><div class="cat-body">
       <div style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px">Sub-Bab</div>
-      <div class="bab-list" id="bab-list-${k}">${(c.babs||[]).map((b,i)=>`<div class="bab-item"><i class="ti ti-grip-vertical" style="font-size:13px;color:var(--text3)"></i><input value="${b}" onchange="editBab('${k}',${i},this.value)"><button class="rm-bab" onclick="removeBab('${k}',${i})"><i class="ti ti-x"></i></button></div>`).join('')}</div>
+      <div class="bab-list" id="bab-list-${k}">${(c.babs||[]).map((b,i)=>`<div class="bab-item"><i class="ti ti-grip-vertical" style="font-size:13px;color:var(--text3)"></i><input value="${b}" onchange="editBab('${k}',${i},this.value)"><button class="rm-bab" onclick="removeBab('${k}',${i})" aria-label="Hapus sub-bab"><i class="ti ti-x"></i></button></div>`).join('')}</div>
       <div class="bab-add-row"><input id="new-bab-${k}" placeholder="Tambah sub-bab baru..." onkeydown="if(event.key==='Enter')addBab('${k}')"><button onclick="addBab('${k}')"><i class="ti ti-plus" style="font-size:11px"></i> Tambah</button></div>
     </div></div>`;
   });
   document.getElementById('settings-content').innerHTML=html;
 }
 function editBab(cat,idx,val){if(cats[cat])cats[cat].babs[idx]=val;}
-function removeBab(cat,idx){if(!confirm('Hapus sub-bab ini?'))return;cats[cat].babs.splice(idx,1);renderSettingsContent();}
+function removeBab(cat,idx){
+  showConfirm({icon:'🗑️',title:'Hapus sub-bab ini?',body:'Sub-bab ini akan dihapus dari kategori.',actionLabel:'Hapus',onConfirm:()=>{
+    cats[cat].babs.splice(idx,1);renderSettingsContent();
+  }});
+}
 function addBab(cat){const inp=document.getElementById('new-bab-'+cat),val=inp.value.trim();if(!val)return;if(!cats[cat].babs)cats[cat].babs=[];cats[cat].babs.push(val);inp.value='';renderSettingsContent();}
-function removeCategory(k){if(!confirm(`Hapus kategori "${cats[k].name||k}"?`))return;delete cats[k];renderSettingsContent();buildCatTabs();populateCatSelects();}
+function removeCategory(k){
+  showConfirm({icon:'🗑️',title:`Hapus kategori "${cats[k].name||k}"?`,body:'Soal yang sudah memakai kategori ini tidak akan terhapus, hanya kehilangan label kategori.',actionLabel:'Hapus',onConfirm:()=>{
+    delete cats[k];renderSettingsContent();buildCatTabs();populateCatSelects();
+  }});
+}
 function addCategory(){const key='KAT'+(Date.now()%10000);const bg='#e8e8e8';cats[key]={name:'Kategori Baru',color:bg,textColor:autoTextColor(bg),babs:[]};renderSettingsContent();}
 
 /* ── REVIEW ── */
 function startReview(forceAll){
-  revIdx=0;
+  revIdx=0;revSessionXP=0;sessionCorrect=0;
   if(forceAll){
     revList=qs.slice().sort(()=>Math.random()-.5);
   }else{
@@ -1959,13 +2021,27 @@ function startReview(forceAll){
   if(!revList.length){
     if(!qs.length){document.getElementById('rev-content').innerHTML='<div class="empty"><i class="ti ti-books"></i><p>Belum ada soal sama sekali.<br>Tambahkan soal dulu di tab Daftar Soal.</p></div>';return;}
     const nextLabel=srsNextDueLabel();
-    document.getElementById('rev-content').innerHTML=`<div class="empty"><i class="ti ti-circle-check"></i><p>Tidak ada kartu untuk direview sekarang.${nextLabel?'<br>Kartu berikutnya jatuh tempo: <b>'+nextLabel+'</b>':''}</p><button class="btn btn-s" style="margin-top:16px;display:inline-flex" onclick="startReview(true)"><i class="ti ti-bolt"></i> Latihan Bebas (semua soal)</button></div>`;
+    document.getElementById('rev-content').innerHTML=`
+  <div class="empty" style="padding:60px 20px">
+    <i class="ti ti-calendar-check" style="font-size:52px;color:var(--success);opacity:.7;margin-bottom:16px;display:block"></i>
+    <h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Semua soal sudah direview!</h3>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:6px">
+      Tidak ada soal yang jatuh tempo saat ini.
+    </p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">
+      ${nextLabel?'Sesi berikutnya: <b>'+nextLabel+'</b>':'Tambahkan lebih banyak soal untuk memulai latihan.'}
+    </p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-s" onclick="startReview(true)"><i class="ti ti-bolt"></i> Latihan Bebas (semua soal)</button>
+      <button class="btn btn-p" onclick="goSec('list', document.querySelectorAll('.bnav-item')[0])"><i class="ti ti-plus"></i> Tambah Soal Baru</button>
+    </div>
+  </div>`;
     return;
   }
   renderRev();
 }
 function renderRev(){
-  if(revIdx>=revList.length){document.getElementById('rev-content').innerHTML=`<div class="empty"><i class="ti ti-circle-check"></i><p>Sesi review selesai.<br>Melatih <b>${revList.length}</b> soal.</p><button class="btn btn-p" style="margin-top:16px;display:inline-flex" onclick="startReview()">Cek Jadwal Berikutnya</button></div>`;return;}
+  if(revIdx>=revList.length){renderRevSummary();return;}
   const q=revList[revIdx];revDone=false;
   const catStyle=catBadgeStyle(q.cat);const catName=cats[q.cat]?(cats[q.cat].name||q.cat):q.cat;
   const pct=Math.round((revIdx/revList.length)*100);
@@ -1976,17 +2052,41 @@ function renderRev(){
       <span style="font-size:13px;color:var(--text2)">${revIdx+1} / ${revList.length}</span>
     </div>
     <div class="rcard">
-      <p class="rq">${q.q}</p>
+      <p class="rq">${sanitizeHtml(q.q)}</p>
       ${q.qimgs&&q.qimgs.length?'<div style="margin-bottom:12px">'+q.qimgs.map(img=>{const ei=typeof img==='string'?{src:img,width:80}:img;return`<img src="${ei.src}" style="max-height:160px;border-radius:4px;border:0.5px solid var(--border);object-fit:contain;cursor:pointer;display:block;margin-bottom:6px" onclick="openLB('${ei.src}')">`;}).join('')+'</div>':''}
       <div class="ropts">${(q.opts||[]).filter(o=>o&&o.trim()&&o!=='<br>').map((o,i)=>{
         if(!LETTERS[i])return'';const l=LETTERS[i];
+        const safeO=sanitizeHtml(o);
         const imgSrc=q.optImgs&&q.optImgs[l]?q.optImgs[l]:'';
-        const extraImg=imgSrc&&!o.includes('<img')?`<img src="${imgSrc}" style="max-height:100px;max-width:100%;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin-top:4px">` :'';
-        const displayHtml=o.replace(/<img([^>]*)style="[^"]*"([^>]*)>/gi,'<img$1style="max-height:100px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin-top:4px"$2>');
+        const extraImg=imgSrc&&!safeO.includes('<img')?`<img src="${imgSrc}" style="max-height:100px;max-width:100%;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin-top:4px">` :'';
+        const displayHtml=safeO.replace(/<img([^>]*)style="[^"]*"([^>]*)>/gi,'<img$1style="max-height:100px;max-width:100%;width:auto;object-fit:contain;border-radius:4px;border:0.5px solid var(--border);display:block;margin-top:4px"$2>');
         return`<button class="ropt" onclick="ansRev(${q.id},'${l}',this)"><span class="ltr">${l}.</span><div class="opt-html-content">${displayHtml}${extraImg}</div></button>`;
       }).join('')}</div>
       <div id="rfb"></div>
       <div style="display:flex;justify-content:flex-end"><button class="btn btn-p" id="rnext" style="display:none" onclick="nextRev()">Soal Berikutnya <i class="ti ti-arrow-right"></i></button></div>
+    </div>`;
+}
+function renderRevSummary(){
+  const total=revList.length;
+  const sessionXP=revSessionXP||0;
+  document.getElementById('rev-content').innerHTML=`
+    <div class="rcard" style="text-align:center;padding:32px 20px">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Sesi selesai!</h2>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:24px">
+        Kamu sudah mereview semua soal yang jatuh tempo hari ini.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+        <div class="scard"><div class="snum">${total}</div><div class="slbl">Direview</div></div>
+        <div class="scard"><div class="snum" style="color:var(--success)">${sessionCorrect}</div><div class="slbl">Benar</div></div>
+        <div class="scard"><div class="snum" style="color:var(--accent)">+${sessionXP}</div><div class="slbl">XP</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:20px">
+        Sesi berikutnya: <b>${srsNextDueLabel()||'Belum ada soal terjadwal'}</b>
+      </p>
+      <button class="btn btn-p" onclick="goSec('list', document.querySelector('.bnav-item'))">
+        <i class="ti ti-books"></i> Kembali ke Daftar Soal
+      </button>
     </div>`;
 }
 function ansRev(qid,chosen,btn){
@@ -2004,12 +2104,14 @@ function ansRev(qid,chosen,btn){
   ensureGami();trackDailyActivity();
   const xpGain=(ok?10:2)+(justMastered?20:0);
   gami.xp+=xpGain;
+  revSessionXP+=xpGain;
+  if(ok)sessionCorrect++;
   persist();
   checkBadges();
   renderGami();
   const srsMsg=ok?`Direview lagi dalam <b>${q.srs.interval} hari</b>.`:`Kartu ini akan muncul lagi sebentar lagi untuk dilatih ulang.`;
   const xpPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);font-weight:600;border-radius:var(--radius-pill);padding:2px 9px;font-size:11px;margin-left:8px;vertical-align:middle"><i class="ti ti-bolt" style="font-size:11px"></i>+${xpGain} XP</span>`;
-  document.getElementById('rfb').innerHTML='<div class="rfb '+(ok?'right':'wrong')+'"><b>'+(ok?'Benar.':'Kurang tepat. Jawaban benar: '+q.correct+'.')+'</b>'+xpPill+(justMastered?'<div style="margin-top:6px;font-size:12px">Soal ini sekarang <b>Dikuasai</b>.</div>':'')+(q.expHtml?'<div class="exp-content" style="margin-top:6px">'+q.expHtml+'</div>':'')+eimgHtml+'<div style="margin-top:8px;font-size:11px;opacity:.75">'+srsMsg+'</div></div>';
+  document.getElementById('rfb').innerHTML='<div class="rfb '+(ok?'right':'wrong')+'"><b>'+(ok?'Benar.':'Kurang tepat. Jawaban benar: '+q.correct+'.')+'</b>'+xpPill+(justMastered?'<div style="margin-top:6px;font-size:12px">Soal ini sekarang <b>Dikuasai</b>.</div>':'')+(q.expHtml?'<div class="exp-content" style="margin-top:6px">'+sanitizeHtml(q.expHtml)+'</div>':'')+eimgHtml+'<div style="margin-top:8px;font-size:11px;opacity:.75">'+srsMsg+'</div></div>';
   if(ok){q.mastered=q.srs.reps>=3;}
   document.getElementById('rnext').style.display='flex';
   updateDueBadge();
@@ -2098,84 +2200,20 @@ function bindPasteArea(){
   pa.addEventListener('click',e=>{if(e.target.tagName==='IMG')openLB(e.target.src);});
 }
 
-/* ── SPLASH 3D (Three.js) ── */
-function initExambreSplash(){
-  const overlay=document.getElementById('exambre-splash');
-  if(!overlay)return;
-  if(typeof THREE==='undefined'){overlay.remove();return;}
-  let renderer,scene,camera,mesh,raf;
-  try{
-    const canvas=document.getElementById('splash-canvas');
-    const dpr=Math.min(window.devicePixelRatio||1,2);
-    const size=200;
-    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(size,size,true);
-
-    scene=new THREE.Scene();
-    camera=new THREE.PerspectiveCamera(35,1,0.1,10);
-    camera.position.set(0,0,5);
-
-    scene.add(new THREE.AmbientLight(0xffffff,0.75));
-    const dir1=new THREE.DirectionalLight(0xffffff,0.9);dir1.position.set(2,3,4);scene.add(dir1);
-    const dir2=new THREE.DirectionalLight(0x88aaff,0.45);dir2.position.set(-3,-2,2);scene.add(dir2);
-
-    const tex=new THREE.TextureLoader().load(
-      './assets/icon/icon-512.png',
-      undefined,undefined,
-      ()=>{ /* gagal load tekstur: biarkan, cylinder tetap tampil warna biru polos */ }
-    );
-
-    const blueMat=new THREE.MeshStandardMaterial({color:0x4F62E0,metalness:0.25,roughness:0.55});
-    const faceMat=new THREE.MeshStandardMaterial({map:tex,metalness:0.1,roughness:0.6});
-    const geo=new THREE.CylinderGeometry(1.3,1.3,0.3,64);
-    mesh=new THREE.Mesh(geo,[blueMat,faceMat,blueMat]);
-    mesh.rotation.x=Math.PI/2+0.2; // hadapkan permukaan ber-logo ke kamera + tilt tipis
-    scene.add(mesh);
-
-    let autoRotate=true,dragging=false,didDrag=false,lastX=0,velocity=0.014;
-    canvas.addEventListener('pointerdown',e=>{dragging=true;didDrag=false;autoRotate=false;lastX=e.clientX;});
-    window.addEventListener('pointermove',e=>{
-      if(!dragging)return;
-      const dx=e.clientX-lastX;lastX=e.clientX;
-      if(Math.abs(dx)>1)didDrag=true;
-      mesh.rotation.y+=dx*0.012;
-      velocity=dx*0.002;
-    });
-    window.addEventListener('pointerup',()=>{
-      if(dragging){dragging=false;setTimeout(()=>{autoRotate=true;},700);}
-    });
-
-    function animate(){
-      raf=requestAnimationFrame(animate);
-      if(autoRotate)mesh.rotation.y+=0.014;
-      else if(!dragging){mesh.rotation.y+=velocity;velocity*=0.96;}
-      mesh.position.y=Math.sin(Date.now()*0.0016)*0.06;
-      renderer.render(scene,camera);
-    }
-    animate();
-
-    overlay._dragFlag=()=>didDrag;
-    overlay._cleanup=()=>{cancelAnimationFrame(raf);renderer.dispose();};
-  }catch(e){
-    console.error('Splash 3D gagal dimuat:',e);
-    overlay.remove();
-    return;
-  }
-
-  function dismiss(){
-    if(overlay.classList.contains('hide'))return;
-    overlay.classList.add('hide');
-    setTimeout(()=>{if(overlay._cleanup)overlay._cleanup();overlay.remove();},550);
-  }
-  overlay.addEventListener('click',()=>{
-    if(overlay._dragFlag&&overlay._dragFlag())return; // jangan skip kalau baru selesai drag
-    dismiss();
-  });
-  setTimeout(dismiss,2400);
+/* ── SPLASH ── */
+function initExambreSplash() {
+  const overlay = document.getElementById('exambre-splash');
+  if (!overlay) return;
+  setTimeout(dismissSplash, 2200);
+}
+function dismissSplash() {
+  const overlay = document.getElementById('exambre-splash');
+  if (!overlay || overlay.classList.contains('hide')) return;
+  overlay.classList.add('hide');
+  setTimeout(() => overlay.remove(), 500);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{loadData();initCloud();initExambreSplash();setTimeout(updateScrollFab,200);});
+document.addEventListener('DOMContentLoaded',()=>{loadData();initCloud();initExambreSplash();});
 </script>
 </body>
 </html>
