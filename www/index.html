@@ -454,6 +454,27 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   </div>
 </div>
 
+<!-- IMPORT PASTE MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal" style="max-width:420px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="margin:0;font-size:15px"><i class="ti ti-upload" style="color:var(--accent)"></i> Import Data</h3>
+      <button class="modal-close" onclick="closeImportModal()" aria-label="Tutup"><i class="ti ti-x"></i></button>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+      Buka file backup <b>.json</b> kamu dengan aplikasi teks/file manager, lalu <b>salin semua isinya</b> dan tempel di sini.
+    </p>
+    <textarea id="import-paste-area"
+      placeholder='Tempel isi file .json di sini...'
+      style="width:100%;height:160px;font-size:12px;font-family:monospace;border:1.5px solid var(--border2);border-radius:var(--radius);padding:10px;background:var(--bg2);color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.5"
+    ></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button class="btn btn-s" onclick="closeImportModal()">Batal</button>
+      <button class="btn btn-p" onclick="doImportFromPaste()"><i class="ti ti-check"></i> Import</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <div class="header nopr">
     <h1><i class="ti ti-book-2" style="color:var(--accent)"></i> Exambre</h1>
@@ -593,8 +614,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <p class="set-desc">Backup semua soal & progress ke file, atau pulihkan dari file backup.</p>
       <div class="data-actions">
         <button class="btn btn-s" onclick="exportData()"><i class="ti ti-download"></i> Export Data</button>
-        <button class="btn btn-s" onclick="document.getElementById('import-file').click()"><i class="ti ti-upload"></i> Import Data</button>
-        <input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importDataFile(this)">
+        <button class="btn btn-s" onclick="openImportModal()"><i class="ti ti-upload"></i> Import Data</button>
       </div>
     </div>
     <div class="panel set-panel">
@@ -1412,30 +1432,66 @@ async function exportData(){
     showToast('Data berhasil diexport','ok');
   }catch(e){showToast('Gagal export data','warn');}
 }
-function importDataFile(input){
-  const file=input.files&&input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=(e)=>{
-    let data;
-    try{data=JSON.parse(e.target.result);}catch(err){showToast('File bukan format JSON yang valid','warn');input.value='';return;}
-    if(!data||!Array.isArray(data.qs)){showToast('File tidak dikenali sebagai backup Exambre','warn');input.value='';return;}
-    showConfirm({icon:'📥',title:'Import data?',body:`Import ${data.qs.length} soal? Ini akan MENGGANTI semua data yang ada sekarang di app ini.`,actionLabel:'Import',onConfirm:()=>{
-      qs=data.qs;
-      nid=data.nid||(qs.reduce((m,q)=>Math.max(m,q.id||0),0)+1);
-      cats=data.cats||{};
-      gami=data.gami||gami;
-      qs.forEach(q=>ensureSrs(q));
-      ensureGami();migrateCatColors();
-      if(Array.isArray(data.notes)){notes=data.notes;noteCats=data.noteCats||[];noteNid=data.noteNid||(notes.reduce((m,n)=>Math.max(m,n.id||0),0)+1);persistNotes();}
-      persist();
-      buildCatTabs();populateCatSelects();updateBabFilter();render();renderGami();
-      showToast('Import berhasil','ok');
-      input.value='';
-    }});
-  };
-  reader.onerror=()=>{showToast('Gagal membaca file','warn');input.value='';};
-  reader.readAsText(file);
+function openImportModal(){
+  const isNative=window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform();
+  if(isNative){importDataNative();return;}
+  // Web fallback: paste modal
+  const area=document.getElementById('import-paste-area');
+  if(area)area.value='';
+  document.getElementById('import-modal').classList.add('on');
+  setTimeout(()=>{if(area)area.focus();},200);
+}
+function closeImportModal(){
+  document.getElementById('import-modal').classList.remove('on');
+  const area=document.getElementById('import-paste-area');
+  if(area)area.value='';
+}
+async function importDataNative(){
+  try{
+    const FilePicker=window.Capacitor.Plugins&&window.Capacitor.Plugins.FilePicker;
+    if(!FilePicker){
+      showToast('Plugin FilePicker belum tersedia, gunakan mode tempel','warn',4000);
+      const area=document.getElementById('import-paste-area');
+      if(area)area.value='';
+      document.getElementById('import-modal').classList.add('on');
+      setTimeout(()=>{if(area)area.focus();},200);
+      return;
+    }
+    const result=await FilePicker.pickFiles({types:['application/json'],readData:true});
+    if(!result||!result.files||!result.files.length)return;
+    const file=result.files[0];
+    if(!file.data){showToast('Gagal membaca isi file','warn');return;}
+    const content=atob(file.data);
+    processImportJson(content);
+  }catch(e){
+    const msg=(e&&e.message)||'';
+    if(/cancel|dismiss/i.test(msg))return; // user cancelled picker
+    showToast('Gagal membuka file: '+msg,'warn',5000);
+    console.error('importDataNative error:',e);
+  }
+}
+function doImportFromPaste(){
+  const raw=(document.getElementById('import-paste-area').value||'').trim();
+  if(!raw){showToast('Tempel isi file JSON dulu ya','warn');return;}
+  closeImportModal();
+  processImportJson(raw);
+}
+function processImportJson(raw){
+  let data;
+  try{data=JSON.parse(raw);}catch(e){showToast('Format JSON tidak valid. Pastikan salin seluruh isi file.','warn');return;}
+  if(!data||!Array.isArray(data.qs)){showToast('File tidak dikenali sebagai backup Exambre','warn');return;}
+  showConfirm({icon:'📥',title:'Import data?',body:`Import ${data.qs.length} soal? Ini akan MENGGANTI semua data yang ada sekarang di app ini.`,actionLabel:'Import',onConfirm:()=>{
+    qs=data.qs;
+    nid=data.nid||(qs.reduce((m,q)=>Math.max(m,q.id||0),0)+1);
+    cats=data.cats||{};
+    gami=data.gami||gami;
+    qs.forEach(q=>ensureSrs(q));
+    ensureGami();migrateCatColors();
+    if(Array.isArray(data.notes)){notes=data.notes;noteCats=data.noteCats||[];noteNid=data.noteNid||(notes.reduce((m,n)=>Math.max(m,n.id||0),0)+1);persistNotes();}
+    persist();
+    buildCatTabs();populateCatSelects();updateBabFilter();render();renderGami();
+    showToast('Import berhasil! '+data.qs.length+' soal dimuat.','ok');
+  }});
 }
 function clearAllData(){
   showConfirm({icon:'⛔',title:'Hapus SEMUA data?',body:'Yakin ingin menghapus SEMUA data (soal, kategori, catatan, progress)? Tindakan ini tidak bisa dibatalkan.',actionLabel:'Ya, Hapus Semuanya',onConfirm:()=>{
