@@ -52,6 +52,22 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+
+      - name: Patch AndroidManifest for file picker stability
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+
+          # 1. Request large heap â€” Android less likely to kill process
+          #    while file picker Activity is open in foreground
+          sed -i 's/android:allowBackup="true"/android:allowBackup="true" android:largeHeap="true"/' "$MANIFEST"
+
+          # 2. Expand configChanges â€” prevent Activity recreation when
+          #    density or fontScale changes during file picker transition
+          sed -i 's/orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode/orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|fontScale|density/' "$MANIFEST"
+
+          echo "=== AndroidManifest patches applied ==="
+          grep -E "largeHeap|configChanges" "$MANIFEST"
+
       - name: Decode release keystore
         run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
 
@@ -87,6 +103,21 @@ jobs:
           GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=512m"
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Rename APK
+        run: |
+          DATE=$(date +'%Y%m%d-%H%M')
+          mv android/app/build/outputs/apk/release/app-release.apk \
+             android/app/build/outputs/apk/release/exambre-$DATE.apk
+          echo "APK_NAME=exambre-$DATE" >> $GITHUB_ENV
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APK_NAME }}
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 30          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
       - name: Rename APK
