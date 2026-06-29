@@ -343,6 +343,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   .rcard{padding:14px 14px}
   .ropt{padding:9px 11px;font-size:12.5px}
 }
+#scan-img-btn{justify-content:center;}
 </style>
 </head>
 <body>
@@ -494,6 +495,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
     <!-- ADD PANEL -->
     <div class="panel nopr" id="add-panel" style="display:none">
+      <!-- Scan from image section -->
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:8px">
+          <i class="ti ti-sparkles" style="color:var(--accent)"></i>
+          Punya foto/screenshot soal? Biarkan AI yang isi otomatis.
+        </p>
+        <input
+          type="file"
+          id="scan-img-input"
+          accept="image/*"
+          style="display:none"
+          onchange="scanImageToQuestion(this)"
+        >
+        <button
+          id="scan-img-btn"
+          class="btn btn-s"
+          style="width:100%;gap:6px"
+          onclick="document.getElementById('scan-img-input').click()"
+          aria-label="Scan soal dari foto atau screenshot"
+        >
+          <i class="ti ti-camera"></i> Scan Soal dari Foto/Screenshot
+        </button>
+      </div>
       <div class="tabs2">
         <button class="t2 on" role="tab" aria-selected="true" onclick="switchMode('paste',this)"><i class="ti ti-clipboard-text" style="vertical-align:-1px;margin-right:4px"></i>Paste Cepat</button>
         <button class="t2" role="tab" aria-selected="false" onclick="switchMode('manual',this)"><i class="ti ti-forms" style="vertical-align:-1px;margin-right:4px"></i>Isi Manual</button>
@@ -2368,6 +2392,130 @@ async function callGemini(prompt){
   const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if(!text)throw new Error('EMPTY_RESPONSE');
   return text.trim();
+}
+
+/* Feature 1.1b — Gemini Vision API call */
+async function callGeminiVision(base64, mimeType) {
+  const key = localStorage.getItem('exambre_gemini_key');
+  if (!key) throw new Error('NO_KEY');
+
+  const res = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + key,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            {
+              inlineData: { mimeType: mimeType, data: base64 }
+            },
+            {
+              text: `Kamu adalah sistem ekstraksi soal ujian Indonesia (CPNS/STAN/UTBK).\nEkstrak semua informasi dari gambar soal ini.\n\nATURAN WAJIB:\n- Jawab HANYA dengan JSON valid. Tidak ada teks lain, tidak ada markdown, tidak ada backtick.\n- Jika field tidak ada di gambar, isi dengan string kosong "".\n- Salin teks PERSIS seperti di gambar, jangan ubah atau ringkas.\n- Untuk "jawaban", isi hanya huruf (A/B/C/D/E).\n\nFORMAT JSON:\n{\n  "soal": "teks lengkap soal termasuk nomor jika ada",\n  "A": "teks pilihan A",\n  "B": "teks pilihan B",\n  "C": "teks pilihan C",\n  "D": "teks pilihan D",\n  "E": "teks pilihan E",\n  "jawaban": "huruf jawaban benar jika ada di gambar, kosong jika tidak",\n  "pembahasan": "teks pembahasan jika ada di gambar, kosong jika tidak"\n}`
+            }
+          ]
+        }],
+        generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
+      })
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    if (res.status === 429) throw new Error('RATE_LIMIT');
+    if (res.status === 400) throw new Error('BAD_KEY');
+    throw new Error(err?.error?.message || res.statusText);
+  }
+
+  const data = await res.json();
+  const text2 = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text2) throw new Error('EMPTY_RESPONSE');
+  return text2.trim();
+}
+
+/* Feature 1.1c — Scan image → auto-fill form */
+async function scanImageToQuestion(inputEl) {
+  const file = inputEl && inputEl.files && inputEl.files[0];
+  if (!file) return;
+
+  if (!localStorage.getItem('exambre_gemini_key')) {
+    showToast('Masukkan Gemini API key dulu di Lainnya → AI Penjelasan', 'warn', 5000);
+    inputEl.value = '';
+    return;
+  }
+
+  const btn = document.getElementById('scan-img-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Memindai...';
+  }
+
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result.split(',')[1]);
+      reader.onerror = () => reject(new Error('Gagal membaca gambar'));
+      reader.readAsDataURL(file);
+    });
+
+    const mimeType = file.type || 'image/jpeg';
+    const rawResponse = await callGeminiVision(base64, mimeType);
+
+    const clean = rawResponse.replace(/```json?|```/gi, '').trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(clean);
+    } catch (e) {
+      throw new Error('FORMAT_ERROR');
+    }
+
+    fillQuestionFormFromScan(parsed);
+    showToast('Soal berhasil dipindai! Periksa kembali sebelum menyimpan ✨', 'ok', 6000);
+
+  } catch (e) {
+    const msg = e.message || '';
+    if (msg === 'NO_KEY')           showToast('Masukkan Gemini API key dulu di menu Lainnya', 'warn', 5000);
+    else if (msg === 'RATE_LIMIT')  showToast('Terlalu banyak request. Tunggu 1 menit lalu coba lagi.', 'warn', 5000);
+    else if (msg === 'BAD_KEY')     showToast('API key tidak valid. Periksa kembali di menu Lainnya.', 'warn', 5000);
+    else if (msg === 'FORMAT_ERROR') showToast('Gagal membaca format soal. Coba ambil foto lebih jelas.', 'warn', 5000);
+    else showToast('Gagal memindai gambar: ' + msg, 'warn', 5000);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-camera"></i> Scan Soal dari Foto/Screenshot';
+    }
+    if (inputEl) inputEl.value = '';
+  }
+}
+
+function fillQuestionFormFromScan(parsed) {
+  // Switch to manual mode (find the manual tab button and call switchMode)
+  const manualTab = document.querySelector('#add-panel .t2[onclick*="manual"]');
+  if (manualTab) switchMode('manual', manualTab);
+
+  // Fill question text — m-q is a <textarea>, use .value
+  const qEl = document.getElementById('m-q');
+  if (qEl && parsed.soal) qEl.value = parsed.soal;
+
+  // Fill options A–E (contenteditable divs with ids m-opt-A … m-opt-E)
+  ['A','B','C','D','E'].forEach(l => {
+    const optEl = document.getElementById('m-opt-' + l);
+    if (optEl && parsed[l]) optEl.innerHTML = sanitizeHtml(parsed[l]);
+  });
+
+  // Set correct answer in select
+  if (parsed.jawaban) {
+    const sel = document.getElementById('m-correct');
+    const jawaban = parsed.jawaban.toUpperCase().trim();
+    if (sel && LETTERS.includes(jawaban)) sel.value = jawaban;
+  }
+
+  // Fill explanation RTE
+  if (parsed.pembahasan && parsed.pembahasan.trim()) {
+    const expEl = document.getElementById('rte-m');
+    if (expEl) expEl.innerHTML = sanitizeHtml(parsed.pembahasan);
+  }
 }
 
 /* Feature 1.4 — Generate Explanation */
