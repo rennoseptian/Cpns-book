@@ -518,6 +518,18 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <i class="ti ti-camera"></i> Scan Soal dari Foto/Screenshot
         </button>
       </div>
+
+      <!-- Scan Preview: gambar asli referensi setelah scan -->
+      <div id="scan-preview-wrap" style="display:none;margin-bottom:12px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border2)">
+        <div style="background:var(--bg2);padding:6px 10px;font-size:11px;color:var(--text2);display:flex;justify-content:space-between;align-items:center">
+          <span><i class="ti ti-photo" style="vertical-align:-1px;margin-right:4px"></i>Referensi soal asli — tap untuk perbesar</span>
+          <button onclick="hideScanPreview()" style="background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;font-size:16px;line-height:1" aria-label="Tutup preview gambar">✕</button>
+        </div>
+        <img id="scan-preview-img" src="" alt="Gambar soal asli"
+          onclick="openLB(this.src)"
+          style="width:100%;max-height:220px;object-fit:contain;background:var(--bg3);cursor:zoom-in;display:block">
+      </div>
+
       <div class="tabs2">
         <button class="t2 on" role="tab" aria-selected="true" onclick="switchMode('paste',this)"><i class="ti ti-clipboard-text" style="vertical-align:-1px;margin-right:4px"></i>Paste Cepat</button>
         <button class="t2" role="tab" aria-selected="false" onclick="switchMode('manual',this)"><i class="ti ti-forms" style="vertical-align:-1px;margin-right:4px"></i>Isi Manual</button>
@@ -1893,6 +1905,7 @@ function togglePanel(){
   }
   const p=document.getElementById('add-panel'),isOpen=p.style.display!=='none';
   p.style.display=isOpen?'none':'block';
+  if(isOpen){hideScanPreview();}
   if(!isOpen){
     populateCatSelects();populateAnswerSelects('p-wrong','p-correct');populateAnswerSelects('m-wrong','m-correct');
     ['p-qimgs','p-eimgs','m-qimgs','m-eimgs'].forEach(k=>{imgAreas[k]=[];renderImgArea(k);});
@@ -2411,7 +2424,8 @@ async function callGeminiVision(base64, mimeType) {
               inlineData: { mimeType: mimeType, data: base64 }
             },
             {
-              text: `Kamu adalah sistem ekstraksi soal ujian Indonesia (CPNS/STAN/UTBK).\nEkstrak semua informasi dari gambar soal ini.\n\nATURAN WAJIB:\n- Jawab HANYA dengan JSON valid. Tidak ada teks lain, tidak ada markdown, tidak ada backtick.\n- Jika field tidak ada di gambar, isi dengan string kosong "".\n- Salin teks PERSIS seperti di gambar, jangan ubah atau ringkas.\n- Untuk "jawaban", isi hanya huruf (A/B/C/D/E).\n\nFORMAT JSON:\n{\n  "soal": "teks lengkap soal termasuk nomor jika ada",\n  "A": "teks pilihan A",\n  "B": "teks pilihan B",\n  "C": "teks pilihan C",\n  "D": "teks pilihan D",\n  "E": "teks pilihan E",\n  "jawaban": "huruf jawaban benar jika ada di gambar, kosong jika tidak",\n  "pembahasan": "teks pembahasan jika ada di gambar, kosong jika tidak"\n}`
+              text: `Kamu adalah sistem ekstraksi soal ujian Indonesia (CPNS/STAN/UTBK).\nEkstrak semua informasi dari gambar soal ini.\n\nATURAN WAJIB:\n- Jawab HANYA dengan JSON valid. Tidak ada teks lain, tidak ada markdown, tidak ada backtick.\n- Jika field tidak ada di gambar, isi dengan string kosong "".\n- Salin teks PERSIS seperti di gambar, jangan ubah atau ringkas.\n- Untuk "jawaban", tulis HANYA SATU HURUF KAPITAL (A, B, C, D, atau E) — TANPA titik, tanpa tanda kurung, tanpa teks lain. Contoh benar: "B". Contoh SALAH: "B. Sadar Berbangsa", "(B)", "b".
+- Cari jawaban benar dari: warna hijau, tanda centang (✓), lingkaran terisi, atau kata Benar/Kunci/Answer di gambar.\n- Cari jawaban SALAH dari: warna merah/pink, tanda silang (✗), atau kata Jawaban Saya di gambar.\n\nFORMAT JSON:\n{\n  "soal": "teks lengkap soal termasuk nomor jika ada",\n  "A": "teks pilihan A",\n  "B": "teks pilihan B",\n  "C": "teks pilihan C",\n  "D": "teks pilihan D",\n  "E": "teks pilihan E",\n  "jawaban": "SATU HURUF jawaban BENAR (hijau/centang), kosong jika tidak ada",\n  "jawaban_saya": "SATU HURUF jawaban SALAH saya (merah/pink), kosong jika tidak ada",\n  "pembahasan": "teks pembahasan jika ada di gambar, kosong jika tidak"\n}`
             }
           ]
         }],
@@ -2434,6 +2448,21 @@ async function callGeminiVision(base64, mimeType) {
 }
 
 /* Feature 1.1c — Scan image → auto-fill form */
+function showScanPreview(src) {
+  const wrap = document.getElementById('scan-preview-wrap');
+  const img  = document.getElementById('scan-preview-img');
+  if (!wrap || !img) return;
+  img.src = src;
+  wrap.style.display = 'block';
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideScanPreview() {
+  const wrap = document.getElementById('scan-preview-wrap');
+  const img  = document.getElementById('scan-preview-img');
+  if (wrap) wrap.style.display = 'none';
+  if (img)  img.src = '';
+}
+
 async function scanImageToQuestion(inputEl) {
   const file = inputEl && inputEl.files && inputEl.files[0];
   if (!file) return;
@@ -2451,12 +2480,14 @@ async function scanImageToQuestion(inputEl) {
   }
 
   try {
-    const base64 = await new Promise((resolve, reject) => {
+    // Read file — capture both full dataUrl (for preview) and base64 (for API)
+    const { base64, dataUrl } = await new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result.split(',')[1]);
+      reader.onload = e => resolve({ dataUrl: e.target.result, base64: e.target.result.split(',')[1] });
       reader.onerror = () => reject(new Error('Gagal membaca gambar'));
       reader.readAsDataURL(file);
     });
+    showScanPreview(dataUrl); // tampilkan preview gambar asli
 
     const mimeType = file.type || 'image/jpeg';
     const rawResponse = await callGeminiVision(base64, mimeType);
@@ -2507,8 +2538,21 @@ function fillQuestionFormFromScan(parsed) {
   // Set correct answer in select
   if (parsed.jawaban) {
     const sel = document.getElementById('m-correct');
-    const jawaban = parsed.jawaban.toUpperCase().trim();
-    if (sel && LETTERS.includes(jawaban)) sel.value = jawaban;
+    // Gemini kadang mengembalikan "B. Teks pilihan..." atau "(B)" atau "B)"
+    // Ekstrak huruf pertama yang valid saja
+    const raw = (parsed.jawaban || '').toUpperCase().trim();
+    const letterMatch = raw.match(/([A-E])/);
+    const jawaban = letterMatch ? letterMatch[1] : raw.charAt(0);
+    if (sel && jawaban && LETTERS.includes(jawaban)) sel.value = jawaban;
+  }
+
+  // Fill wrong answer (jawaban saya yang salah — warna merah di screenshot)
+  if (parsed.jawaban_saya) {
+    const wrongSel = document.getElementById('m-wrong');
+    const rawW = (parsed.jawaban_saya || '').toUpperCase().trim();
+    const wrongMatch = rawW.match(/\b([A-E])\b/);
+    const jawabanSaya = wrongMatch ? wrongMatch[1] : rawW.charAt(0);
+    if (wrongSel && jawabanSaya && LETTERS.includes(jawabanSaya)) wrongSel.value = jawabanSaya;
   }
 
   // Fill explanation RTE
